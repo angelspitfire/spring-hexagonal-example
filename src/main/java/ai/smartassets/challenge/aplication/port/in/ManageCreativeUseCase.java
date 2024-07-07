@@ -1,15 +1,15 @@
 package ai.smartassets.challenge.aplication.port.in;
 
 import ai.smartassets.challenge.domain.Creative;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ManageCreativeUseCase {
     Creative createCreative(Creative creative);
 
-    Page<Creative> listCreatives(PageRequest of);
+    List<Creative> listCreatives(PageRequest of);
 
     Optional<Creative> getCreativeById(String creativeId);
 

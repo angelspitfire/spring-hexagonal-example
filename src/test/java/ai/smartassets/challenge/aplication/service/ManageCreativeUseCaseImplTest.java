@@ -7,8 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,13 +44,17 @@ class ManageCreativeUseCaseImplTest {
     @Test
     void listCreatives() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<Creative> page = mock(Page.class);
+        Creative creative = mock(Creative.class);
+        List<Creative> creativeList = List.of(creative);
+        Page<Creative> page = new PageImpl<>(creativeList);
         when(creativeRepository.findAll(pageRequest)).thenReturn(page);
 
-        Page<Creative> result = manageCreativeUseCase.listCreatives(pageRequest);
+        List<Creative> result = manageCreativeUseCase.listCreatives(pageRequest);
 
         verify(creativeRepository).findAll(pageRequest);
-        assertEquals(page, result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(creative, result.get(0));
     }
 
     @Test

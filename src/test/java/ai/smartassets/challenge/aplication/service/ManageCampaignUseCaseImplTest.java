@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,13 +43,17 @@ class ManageCampaignUseCaseImplTest {
     @Test
     void listCampaigns() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        Page<Campaign> page = mock(Page.class);
+        Campaign campaign = mock(Campaign.class);
+        List<Campaign> campaignList = List.of(campaign);
+        Page<Campaign> page = new PageImpl<>(campaignList, pageRequest, campaignList.size());
         when(campaignRepository.findAll(pageRequest)).thenReturn(page);
 
-        Page<Campaign> result = manageCampaignUseCase.listCampaigns(pageRequest);
+        List<Campaign> result = manageCampaignUseCase.listCampaigns(pageRequest);
 
         verify(campaignRepository).findAll(pageRequest);
-        assertEquals(page, result);
+        assertFalse(result.isEmpty());
+        assertEquals(1, result.size());
+        assertEquals(campaign, result.get(0));
     }
 
     @Test

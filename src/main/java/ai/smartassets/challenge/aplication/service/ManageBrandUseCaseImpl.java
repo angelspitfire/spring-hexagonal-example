@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,9 +28,9 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
     }
 
     @Override
-    public Page<Brand> listBrands(Pageable pageable) {
+    public List<Brand> listBrands(Pageable pageable) {
         //TODO: Implement listing logic here
-        return brandRepository.findAll(pageable);
+        return brandRepository.findAll(pageable).toList();
     }
 
     @Override
