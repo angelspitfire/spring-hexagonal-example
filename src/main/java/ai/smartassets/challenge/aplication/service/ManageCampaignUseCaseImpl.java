@@ -84,7 +84,9 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     @Override
     public List<Campaign> findCampaignsByBrandId(String brandId) {
-        return List.of();
+        return campaignRepository.findByBrandId(brandId).stream()
+                .map(ManageCampaignUseCaseImpl::getCampaign)
+                .toList();
     }
 
     @Override
