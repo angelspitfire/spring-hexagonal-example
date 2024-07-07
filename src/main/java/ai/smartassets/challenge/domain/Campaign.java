@@ -1,4 +1,4 @@
-package ai.smartassets.challenge.model;
+package ai.smartassets.challenge.domain;
 
 import lombok.Data;
 
