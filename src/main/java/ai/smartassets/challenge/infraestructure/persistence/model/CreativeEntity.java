@@ -24,4 +24,7 @@ public class CreativeEntity {
 
     @Field("creativeUrl")
     private String creativeUrl;
+
+    @Field("campaign_id")
+    private String campaignId;
 }

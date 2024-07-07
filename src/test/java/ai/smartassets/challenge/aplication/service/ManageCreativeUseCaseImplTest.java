@@ -33,21 +33,24 @@ class ManageCreativeUseCaseImplTest {
 
     @Test
     void createCreative() {
-        CreativeEntity creativeEntity = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf");
-        Creative creative = new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl());
+        CreativeEntity creativeEntity = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1");
+        Creative creative = new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
 
         when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(creativeEntity);
 
         Creative result = manageCreativeUseCase.createCreative(creative);
 
         verify(creativeRepository).save(creativeEntity);
-        assertThat(result).isEqualTo(creative);
+        assertThat(result.getCreativeId()).isEqualTo(creativeEntity.getId());
+        assertThat(result.getName()).isEqualTo(creativeEntity.getName());
+        assertThat(result.getDescription()).isEqualTo(creativeEntity.getDescription());
+        assertThat(result.getCreativeUrl()).isEqualTo(creativeEntity.getCreativeUrl());
     }
 
     @Test
     void listCreatives() {
         PageRequest pageRequest = PageRequest.of(0, 10);
-        CreativeEntity creative = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf");
+        CreativeEntity creative = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1");
         List<CreativeEntity> creativeList = List.of(creative);
         Page<CreativeEntity> page = new PageImpl<>(creativeList);
         when(creativeRepository.findAll(pageRequest)).thenReturn(page);
@@ -67,7 +70,7 @@ class ManageCreativeUseCaseImplTest {
     @Test
     void getCreativeById() {
         String id = "testId";
-        Optional<CreativeEntity> creativeEntity = Optional.of(new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf"));
+        Optional<CreativeEntity> creativeEntity = Optional.of(new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1"));
         when(creativeRepository.findById(id)).thenReturn(creativeEntity);
 
         Optional<Creative> result = manageCreativeUseCase.getCreativeById(id);
@@ -89,7 +92,7 @@ class ManageCreativeUseCaseImplTest {
         when(creativeRepository.findById(id)).thenReturn(Optional.of(existingCreativeEntity));
         when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(updatedCreativeEntity);
 
-        Creative updatedCreative = new Creative(updatedCreativeEntity.getId(), updatedCreativeEntity.getName(), updatedCreativeEntity.getDescription(), updatedCreativeEntity.getCreativeUrl());
+        Creative updatedCreative = new Creative(updatedCreativeEntity.getId(), updatedCreativeEntity.getName(), updatedCreativeEntity.getDescription(), updatedCreativeEntity.getCreativeUrl(), updatedCreativeEntity.getCampaignId());
         Optional<Creative> result = manageCreativeUseCase.updateCreative(id, updatedCreative);
 
         verify(creativeRepository).findById(id);

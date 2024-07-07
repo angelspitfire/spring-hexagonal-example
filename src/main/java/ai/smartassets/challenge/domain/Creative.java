@@ -10,5 +10,6 @@ public class Creative {
     private String name;
     private String description;
     private String creativeUrl;
+    private String campaignId;
 
 }
