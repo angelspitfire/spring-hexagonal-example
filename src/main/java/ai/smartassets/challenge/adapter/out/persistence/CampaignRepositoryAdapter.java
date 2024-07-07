@@ -50,6 +50,6 @@ public class CampaignRepositoryAdapter implements CampaignRepositoryPort {
     }
 
     private static CampaignEntity getEntity(Campaign campaign) {
-        return new CampaignEntity(campaign.getCampaignId(), campaign.getName(), campaign.getDescription());
+        return new CampaignEntity(campaign.getCampaignId(), campaign.getName(), campaign.getDescription(), null);
     }
 }

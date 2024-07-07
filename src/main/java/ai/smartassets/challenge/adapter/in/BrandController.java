@@ -1,7 +1,10 @@
 package ai.smartassets.challenge.adapter.in;
 
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
+import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.domain.Brand;
+import ai.smartassets.challenge.domain.Campaign;
+import ai.smartassets.challenge.domain.Creative;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +16,12 @@ import java.util.List;
 @RequestMapping("/brands")
 public class BrandController {
     private final ManageBrandUseCase manageBrandUseCase;
+    private final ManageCampaignUseCase manageCampaignUseCase;
 
     @Autowired
-    public BrandController(ManageBrandUseCase manageBrandUseCase) {
+    public BrandController(ManageBrandUseCase manageBrandUseCase, ManageCampaignUseCase manageCampaignUseCase) {
         this.manageBrandUseCase = manageBrandUseCase;
+        this.manageCampaignUseCase = manageCampaignUseCase;
     }
 
     @PostMapping
@@ -53,5 +58,18 @@ public class BrandController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PostMapping("/{brandId}/campaigns")
+    public ResponseEntity<Campaign> createCampaignForBrand(@PathVariable String brandId, @RequestBody Campaign campaign) {
+        Campaign createdCampaign = manageCampaignUseCase.createCampaignForBrand(brandId, campaign);
+        return ResponseEntity.ok(createdCampaign);
+    }
+
+    @GetMapping("/brands/{brandId}/campaigns/{campaignId}/creatives")
+    public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId, @PathVariable String campaignId) {
+        // TODO: Add logic to verify that the campaign belongs to the brand
+        List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId);
+        return ResponseEntity.ok(creatives);
     }
 }
