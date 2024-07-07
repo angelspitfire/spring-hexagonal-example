@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ManageCampaignUseCase {
-    Campaign createCampaign(Campaign campaign);
+    Campaign createCampaign(String brandId, Campaign campaign) ;
 
     List<Campaign> listCampaigns(PageRequest pageRequest);
 

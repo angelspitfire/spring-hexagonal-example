@@ -35,10 +35,25 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Campaign createCampaign(Campaign campaign) {
+    public Campaign createCampaign(String brandId, Campaign campaign) {
 
-        CampaignEntity entity = getEntity(campaign, null);
-        return getCampaign(campaignRepository.save(entity));
+        if (brandId == null || brandId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Brand ID cannot be null or empty");
+        }
+
+        if (campaign == null || campaign.getName() == null || campaign.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Campaign details are not valid");
+        }
+
+        brandRepository.findById(brandId).orElseThrow(() -> {
+            log.error("Brand with id {} not found", brandId);
+            return new BrandNotFoundException("Brand with id " + brandId + " not found");
+        });
+
+        log.info("Creating campaign for brandId {}: {}", brandId, campaign);
+        CampaignEntity entity = getEntity(campaign, brandId);
+        CampaignEntity savedEntity = campaignRepository.save(entity);
+        return getCampaign(savedEntity);
     }
 
     @Override

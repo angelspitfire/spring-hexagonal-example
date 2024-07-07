@@ -47,11 +47,14 @@ class ManageCampaignUseCaseImplTest {
 
     @Test
     void createCampaign() {
-        CampaignEntity campaignEntity = new CampaignEntity("1", "Test Campaign", "Description", null);
+        String brandId = "brand123";
+        BrandEntity brandEntity = new BrandEntity(brandId, "Brand Name", "Brand Description");
+        CampaignEntity campaignEntity = new CampaignEntity("camp123", "Campaign Name", "Campaign Description", brandId);
+        when(brandRepository.findById(anyString())).thenReturn(Optional.of(brandEntity));
         when(campaignRepository.save(any(CampaignEntity.class))).thenReturn(campaignEntity);
 
         Campaign campaign = new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
-        Campaign result = manageCampaignUseCase.createCampaign(campaign);
+        Campaign result = manageCampaignUseCase.createCampaign(brandId, campaign);
 
         verify(campaignRepository).save(campaignEntity);
         assertThat(result.getCampaignId()).isEqualTo(campaignEntity.getId());
@@ -166,9 +169,9 @@ class ManageCampaignUseCaseImplTest {
 
     @Test
     void findCreativesByBrandIdAndCampaignId_ReturnsCorrectCreatives() {
-
         String brandId = "testBrandId";
         String campaignId = "testCampaignId";
+        BrandEntity mockBrandEntity = new BrandEntity(brandId, "Brand Name", "Brand Description");
         List<CampaignEntity> mockCampaignEntities = List.of(
                 new CampaignEntity(campaignId, "Campaign Name", "Campaign Description", brandId)
         );
@@ -177,17 +180,16 @@ class ManageCampaignUseCaseImplTest {
                 new CreativeEntity("creative1", "Creative 1", "Description 1", "url1", campaignId),
                 new CreativeEntity("creative2", "Creative 2", "Description 2", "url2", campaignId)
         );
+        when(brandRepository.findById(brandId)).thenReturn(Optional.of(mockBrandEntity));
         when(campaignRepository.findByBrandIdAndId(brandId, campaignId)).thenReturn(mockCampaignEntities);
         when(creativeRepository.findByCampaignId(campaignId)).thenReturn(mockCreativeEntities);
 
-        // Execute
         List<Creative> result = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId);
 
-        // Verify
         assertEquals(2, result.size());
         assertEquals("Creative 1", result.get(0).getName());
         assertEquals("Creative 2", result.get(1).getName());
-        Mockito.verify(campaignRepository).findByBrandIdAndId(brandId, campaignId);
-        Mockito.verify(creativeRepository).findByCampaignId(campaignId);
+        verify(campaignRepository).findByBrandIdAndId(brandId, campaignId);
+        verify(creativeRepository).findByCampaignId(campaignId);
     }
 }
