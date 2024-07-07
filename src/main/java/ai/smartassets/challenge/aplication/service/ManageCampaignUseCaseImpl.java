@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
+import ai.smartassets.challenge.aplication.exception.CampaignNotFoundException;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.aplication.port.out.BrandRepository;
 import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
@@ -9,6 +10,7 @@ import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@Service
+@Service @Slf4j
 public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     private final CampaignRepository campaignRepository;
@@ -91,8 +93,31 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     @Override
     public List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId) {
-        return campaignRepository.findByBrandIdAndId(brandId, campaignId).stream()
-                .flatMap(getCampaignEntity())
+
+        if (brandId == null || brandId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Brand ID cannot be null or empty");
+        }
+
+        if (campaignId == null || campaignId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Campaign ID cannot be null or empty");
+        }
+
+        brandRepository.findById(brandId).orElseThrow(() -> {
+            log.error("Brand with id {} not found", brandId); // Logging
+            return new BrandNotFoundException("Brand with id " + brandId + " not found");
+        });
+
+        CampaignEntity campaignEntity = campaignRepository.findByBrandIdAndId(brandId, campaignId)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> {
+                    log.error("Campaign with id {} not found or does not belong to brand with id {}", campaignId, brandId); // Logging
+                    return new CampaignNotFoundException("Campaign with id " + campaignId + " not found or does not belong to brand with id " + brandId);
+                });
+
+        List<CreativeEntity> creativeEntities = creativeRepository.findByCampaignId(campaignId);
+        log.info("Found {} creatives for campaignId {}", creativeEntities.size(), campaignId); // Logging
+        return creativeEntities.stream()
                 .map(ManageCampaignUseCaseImpl::getCreative)
                 .toList();
     }
