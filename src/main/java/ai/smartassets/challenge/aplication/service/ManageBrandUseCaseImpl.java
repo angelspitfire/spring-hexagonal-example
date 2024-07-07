@@ -3,8 +3,8 @@ package ai.smartassets.challenge.aplication.service;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.out.BrandRepository;
 import ai.smartassets.challenge.domain.Brand;
+import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -23,30 +23,32 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
 
     @Override
     public Brand createBrand(Brand brand) {
-        //TODO: Implement creation logic here
-        return brandRepository.save(brand);
+        BrandEntity brandEntity = new BrandEntity(brand.getBrandId(), brand.getName(), brand.getDescription());
+        BrandEntity entity = brandRepository.save(brandEntity);
+        return new Brand(entity.getId(), entity.getName(), entity.getDescription());
     }
 
     @Override
     public List<Brand> listBrands(Pageable pageable) {
-        //TODO: Implement listing logic here
-        return brandRepository.findAll(pageable).toList();
+        return brandRepository.findAll(pageable)
+                .stream().map(brand -> new Brand(brand.getId(), brand.getName(), brand.getDescription()))
+                .toList();
     }
 
     @Override
     public Optional<Brand> getBrandById(String id) {
-        //TODO: Implement get by ID logic here
-        return brandRepository.findById(id);
+        return brandRepository.findById(id)
+                .map(brand -> new Brand(brand.getId(), brand.getName(), brand.getDescription()));
     }
 
     @Override
     public Optional<Brand> updateBrand(String id, Brand brand) {
-        //TODO: Implement update logic here, including fetching and updating the brand
-        return brandRepository.findById(id)
-                .map(existingBrand -> {
-                    //TODO: Update existingBrand fields from brand
-                    return brandRepository.save(existingBrand);
-                });
+        return brandRepository.findById(id).map(brandEntity -> {
+            brandEntity.setName(brand.getName());
+            brandEntity.setDescription(brand.getDescription());
+            BrandEntity entity = brandRepository.save(brandEntity);
+            return Optional.of(new Brand(entity.getId(), entity.getName(), entity.getDescription()));
+        }).orElse(Optional.empty());
     }
 
     @Override

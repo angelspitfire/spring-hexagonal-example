@@ -3,8 +3,8 @@ package ai.smartassets.challenge.aplication.service;
 import ai.smartassets.challenge.aplication.port.in.ManageCreativeUseCase;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
 import ai.smartassets.challenge.domain.Creative;
+import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -23,27 +23,36 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
 
     @Override
     public Creative createCreative(Creative creative) {
-        return creativeRepository.save(creative);
+        CreativeEntity entity = getEntity(creative);
+        return getCreative(creativeRepository.save(entity));
+    }
+
+    private static CreativeEntity getEntity(Creative creative) {
+        return new CreativeEntity(creative.getCreativeId(), creative.getName(), creative.getDescription(), creative.getCreativeUrl());
     }
 
     @Override
-    public List<Creative> listCreatives(PageRequest of) {
-        return creativeRepository.findAll(of).toList();
+    public List<Creative> listCreatives(PageRequest pageRequest) {
+        return creativeRepository.findAll(pageRequest).stream().map(ManageCreativeUseCaseImpl::getCreative).toList();
+    }
+
+    private static Creative getCreative(CreativeEntity creativeEntity) {
+        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl());
     }
 
     @Override
     public Optional<Creative> getCreativeById(String creativeId) {
-        return creativeRepository.findById(creativeId);
+        return creativeRepository.findById(creativeId).map(ManageCreativeUseCaseImpl::getCreative);
     }
 
     @Override
     public Optional<Creative> updateCreative(String creativeId, Creative creative) {
-        return creativeRepository.findById(creativeId)
-                .map(existingCreative -> {
-                    existingCreative.setName(creative.getName());
-                    existingCreative.setDescription(creative.getDescription());
-                    return creativeRepository.save(existingCreative);
-                });
+        return creativeRepository.findById(creativeId).map(creativeEntity -> {
+            creativeEntity.setName(creative.getName());
+            creativeEntity.setDescription(creative.getDescription());
+            creativeEntity.setCreativeUrl(creative.getCreativeUrl());
+            return getCreative(creativeRepository.save(creativeEntity));
+        });
     }
 
     @Override

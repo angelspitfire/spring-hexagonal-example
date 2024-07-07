@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ManageCreativeUseCase {
     Creative createCreative(Creative creative);
 
-    List<Creative> listCreatives(PageRequest of);
+    List<Creative> listCreatives(PageRequest pageRequest);
 
     Optional<Creative> getCreativeById(String creativeId);
 

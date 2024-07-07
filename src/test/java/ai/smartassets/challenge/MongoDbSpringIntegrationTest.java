@@ -21,14 +21,12 @@ public class MongoDbSpringIntegrationTest {
 
     @Test
     public void testMongoDb() {
-        // Given
+
         Brand document = new Brand("1", "Test Brand", "Description");
         document.setName("Test Name");
 
-        // When
         mongoTemplate.save(document);
 
-        // Then
         long count = mongoTemplate.count(Query.query(Criteria.where("name").is("Test Name")), Brand.class);
         assertEquals(1, count);
     }
