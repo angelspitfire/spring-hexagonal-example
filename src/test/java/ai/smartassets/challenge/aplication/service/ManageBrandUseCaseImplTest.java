@@ -2,6 +2,7 @@ package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.port.out.BrandRepository;
 import ai.smartassets.challenge.domain.Brand;
+import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -30,57 +32,66 @@ class ManageBrandUseCaseImplTest {
 
     @Test
     void createBrand() {
-        Brand brand = new Brand("1", "Test Brand", "Description");
-        when(brandRepositoryPort.save(any(Brand.class))).thenReturn(brand);
+        BrandEntity brandEntity = new BrandEntity("1", "Test Brand", "Description");
+        when(brandRepositoryPort.save(any(BrandEntity.class))).thenReturn(brandEntity);
 
+        Brand brand = new Brand("1", "Test Brand", "Description");
         Brand createdBrand = manageBrandUseCase.createBrand(brand);
 
-        assertEquals(brand, createdBrand);
+        //assertEquals(brandEntity, createdBrand);
+        assertThat(createdBrand.getBrandId()).isEqualTo(brandEntity.getId());
+        assertThat(createdBrand.getName()).isEqualTo(brandEntity.getName());
+        assertThat(createdBrand.getDescription()).isEqualTo(brandEntity.getDescription());
     }
 
     @Test
     void listBrands() {
         PageRequest pageable = PageRequest.of(0, 10);
-        Brand brand = new Brand("1", "Test Brand", "Description");
-        Page<Brand> brandPage = new PageImpl<>(Collections.singletonList(brand));
+        BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
+        Page<BrandEntity> brandPage = new PageImpl<>(Collections.singletonList(brand));
         when(brandRepositoryPort.findAll(any(PageRequest.class))).thenReturn(brandPage);
 
         List<Brand> result = manageBrandUseCase.listBrands(pageable);
 
         assertFalse(result.isEmpty());
-        assertEquals(brand, result.get(0));
+        assertThat(result.get(0).getBrandId()).isEqualTo(brand.getId());
+        assertThat(result.get(0).getName()).isEqualTo(brand.getName());
+        assertThat(result.get(0).getDescription()).isEqualTo(brand.getDescription());
     }
 
     @Test
     void getBrandById() {
-        Brand brand = new Brand("1", "Test Brand", "Description");
+        BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(brand));
 
         Optional<Brand> foundBrand = manageBrandUseCase.getBrandById("1");
 
         assertTrue(foundBrand.isPresent());
-        assertEquals(brand, foundBrand.get());
+        assertThat(foundBrand.get().getBrandId()).isEqualTo(brand.getId());
+        assertThat(foundBrand.get().getName()).isEqualTo(brand.getName());
+        assertThat(foundBrand.get().getDescription()).isEqualTo(brand.getDescription());
     }
 
     @Test
     void updateBrand() {
-        Brand existingBrand = new Brand("1", "Test Brand", "Description");
-        Brand updatedBrand = new Brand("1", "Updated Brand", "Updated Description");
-        when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(existingBrand));
-        when(brandRepositoryPort.save(any(Brand.class))).thenReturn(updatedBrand);
+        BrandEntity existingEntityBrand = new BrandEntity("1", "Test Brand", "Description");
+        BrandEntity updatedEntityBrand = new BrandEntity("1", "Updated Brand", "Updated Description");
+        when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(existingEntityBrand));
+        when(brandRepositoryPort.save(any(BrandEntity.class))).thenReturn(updatedEntityBrand);
 
+        Brand updatedBrand = new Brand(updatedEntityBrand.getId(), updatedEntityBrand.getName(), updatedEntityBrand.getDescription());
         Optional<Brand> result = manageBrandUseCase.updateBrand("1", updatedBrand);
 
         assertTrue(result.isPresent());
-        assertEquals(updatedBrand.getName(), result.get().getName());
-        assertEquals(updatedBrand.getDescription(), result.get().getDescription());
+        assertEquals(updatedEntityBrand.getName(), result.get().getName());
+        assertEquals(updatedEntityBrand.getDescription(), result.get().getDescription());
     }
 
     @Test
     void deleteBrand() {
-        Brand brand = new Brand("1", "Test Brand", "Description");
+        BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(brand));
-        Mockito.doNothing().when(brandRepositoryPort).delete(any(Brand.class));
+        Mockito.doNothing().when(brandRepositoryPort).delete(any(BrandEntity.class));
 
         boolean result = manageBrandUseCase.deleteBrand("1");
 

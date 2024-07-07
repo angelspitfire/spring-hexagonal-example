@@ -2,6 +2,7 @@ package ai.smartassets.challenge.adapter.out.persistence;
 
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
+import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -10,10 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.*;
 
 class CreativeRepositoryAdapterTest {
@@ -32,46 +33,59 @@ class CreativeRepositoryAdapterTest {
     @Test
     void findAll() {
         Pageable pageable = mock(Pageable.class);
-        Creative creative = mock(Creative.class);
-        Page<Creative> expectedPage = new PageImpl<>(Collections.singletonList(creative));
+        CreativeEntity creative = mock(CreativeEntity.class);
+        Page<CreativeEntity> expectedPage = new PageImpl<>(List.of(creative));
         when(creativeRepository.findAll(pageable)).thenReturn(expectedPage);
 
         Page<Creative> result = creativeRepositoryAdapter.findAll(pageable);
 
-        assertEquals(expectedPage, result);
+        assertThat(result.getContent().get(0).getCreativeId()).isEqualTo(creative.getId());
+        assertThat(result.getContent().get(0).getName()).isEqualTo(creative.getName());
+        assertThat(result.getContent().get(0).getDescription()).isEqualTo(creative.getDescription());
         verify(creativeRepository).findAll(pageable);
     }
 
     @Test
     void save() {
-        Creative creative = mock(Creative.class);
-        when(creativeRepository.save(creative)).thenReturn(creative);
+        CreativeEntity creativeEntity = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf");
+        when(creativeRepository.save(creativeEntity)).thenReturn(creativeEntity);
 
+        Creative creative = new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl());
         Creative result = creativeRepositoryAdapter.save(creative);
 
-        assertEquals(creative, result);
-        verify(creativeRepository).save(creative);
+        assertThat(result.getCreativeId()).isEqualTo(creativeEntity.getId());
+        assertThat(result.getName()).isEqualTo(creativeEntity.getName());
+        assertThat(result.getDescription()).isEqualTo(creativeEntity.getDescription());
+        assertThat(result.getCreativeUrl()).isEqualTo(creativeEntity.getCreativeUrl());
+
+        verify(creativeRepository).save(creativeEntity);
     }
 
     @Test
     void findById() {
         String id = "testId";
-        Optional<Creative> expectedCreative = Optional.of(mock(Creative.class));
+        Optional<CreativeEntity> expectedCreative = Optional.of(mock(CreativeEntity.class));
         when(creativeRepository.findById(id)).thenReturn(expectedCreative);
 
         Optional<Creative> result = creativeRepositoryAdapter.findById(id);
 
-        assertEquals(expectedCreative, result);
+        assertThat(result.get().getCreativeId()).isEqualTo(expectedCreative.get().getId());
+        assertThat(result.get().getName()).isEqualTo(expectedCreative.get().getName());
+        assertThat(result.get().getDescription()).isEqualTo(expectedCreative.get().getDescription());
+        assertThat(result.get().getCreativeUrl()).isEqualTo(expectedCreative.get().getCreativeUrl());
+
         verify(creativeRepository).findById(id);
     }
 
     @Test
     void delete() {
-        Creative creative = mock(Creative.class);
+        CreativeEntity creativeEntity = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf");
+        when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(creativeEntity);
 
+        Creative creative = new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl());
         creativeRepositoryAdapter.delete(creative);
 
-        verify(creativeRepository).delete(creative);
+        verify(creativeRepository).delete(creativeEntity);
     }
 
     @Test

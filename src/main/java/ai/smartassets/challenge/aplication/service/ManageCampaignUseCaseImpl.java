@@ -3,8 +3,8 @@ package ai.smartassets.challenge.aplication.service;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
 import ai.smartassets.challenge.domain.Campaign;
+import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -23,30 +23,36 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     @Override
     public Campaign createCampaign(Campaign campaign) {
-        return campaignRepository.save(campaign);
+
+        CampaignEntity entity = getEntity(campaign);
+        return getCampaign(campaignRepository.save(entity));
+    }
+
+    private static CampaignEntity getEntity(Campaign campaign) {
+        return new CampaignEntity(campaign.getCampaignId(), campaign.getName(), campaign.getDescription());
     }
 
     @Override
     public List<Campaign> listCampaigns(PageRequest pageRequest) {
-        return campaignRepository.findAll(pageRequest).toList();
+        return campaignRepository.findAll(pageRequest).map(ManageCampaignUseCaseImpl::getCampaign).toList();
+    }
+
+    private static Campaign getCampaign(CampaignEntity campaignEntity) {
+        return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
     }
 
     @Override
     public Optional<Campaign> getCampaignById(String id) {
-        return campaignRepository.findById(id);
+        return campaignRepository.findById(id).map(ManageCampaignUseCaseImpl::getCampaign);
     }
 
     @Override
     public Optional<Campaign> updateCampaign(String campaignId, Campaign campaign) {
-        return campaignRepository.findById(campaignId)
-                .map(existingCampaign -> {
-                    // Update properties of existingCampaign with values from campaign
-                    // This is a simplified example. You should set each property you want to update individually.
-                    existingCampaign.setName(campaign.getName());
-                    existingCampaign.setDescription(campaign.getDescription());
-                    // Add more fields to update as necessary
-                    return campaignRepository.save(existingCampaign);
-                });
+        return campaignRepository.findById(campaignId).map(campaignEntity -> {
+            campaignEntity.setName(campaign.getName());
+            campaignEntity.setDescription(campaign.getDescription());
+            return getCampaign(campaignRepository.save(campaignEntity));
+        });
     }
 
     @Override

@@ -1,8 +1,9 @@
 package ai.smartassets.challenge.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data
+@Data @AllArgsConstructor
 public class Creative {
 
     private String creativeId;
