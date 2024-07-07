@@ -2,9 +2,9 @@ package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.port.out.BrandRepository;
+import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
 import ai.smartassets.challenge.domain.Campaign;
-import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
@@ -12,7 +12,6 @@ import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
