@@ -5,11 +5,14 @@ import ai.smartassets.challenge.aplication.port.out.BrandRepository;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
 import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
+import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
+import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -159,5 +162,32 @@ class ManageCampaignUseCaseImplTest {
         assertEquals(2, campaigns.size());
         assertEquals("Campaign 1", campaigns.get(0).getName());
         assertEquals("Campaign 2", campaigns.get(1).getName());
+    }
+
+    @Test
+    void findCreativesByBrandIdAndCampaignId_ReturnsCorrectCreatives() {
+
+        String brandId = "testBrandId";
+        String campaignId = "testCampaignId";
+        List<CampaignEntity> mockCampaignEntities = List.of(
+                new CampaignEntity(campaignId, "Campaign Name", "Campaign Description", brandId)
+        );
+
+        List<CreativeEntity> mockCreativeEntities = Arrays.asList(
+                new CreativeEntity("creative1", "Creative 1", "Description 1", "url1", campaignId),
+                new CreativeEntity("creative2", "Creative 2", "Description 2", "url2", campaignId)
+        );
+        when(campaignRepository.findByBrandIdAndId(brandId, campaignId)).thenReturn(mockCampaignEntities);
+        when(creativeRepository.findByCampaignId(campaignId)).thenReturn(mockCreativeEntities);
+
+        // Execute
+        List<Creative> result = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId);
+
+        // Verify
+        assertEquals(2, result.size());
+        assertEquals("Creative 1", result.get(0).getName());
+        assertEquals("Creative 2", result.get(1).getName());
+        Mockito.verify(campaignRepository).findByBrandIdAndId(brandId, campaignId);
+        Mockito.verify(creativeRepository).findByCampaignId(campaignId);
     }
 }

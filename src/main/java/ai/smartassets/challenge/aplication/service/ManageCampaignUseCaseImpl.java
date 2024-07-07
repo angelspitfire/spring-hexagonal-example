@@ -102,7 +102,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     private static Creative getCreative(CreativeEntity e) {
-        return new Creative(e.getId(), e.getName(), e.getDescription(), e.getCreativeUrl());
+        return new Creative(e.getId(), e.getName(), e.getDescription(), e.getCreativeUrl(), e.getCampaignId());
     }
 
     private static CampaignEntity getCampaignEntity(String brandId, Campaign campaign) {

@@ -28,7 +28,7 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
     }
 
     private static CreativeEntity getEntity(Creative creative) {
-        return new CreativeEntity(creative.getCreativeId(), creative.getName(), creative.getDescription(), creative.getCreativeUrl());
+        return new CreativeEntity(creative.getCreativeId(), creative.getName(), creative.getDescription(), creative.getCreativeUrl(), creative.getCampaignId());
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
     }
 
     private static Creative getCreative(CreativeEntity creativeEntity) {
-        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl());
+        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
     }
 
     @Override
