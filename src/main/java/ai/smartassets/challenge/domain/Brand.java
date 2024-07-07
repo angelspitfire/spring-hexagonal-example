@@ -1,8 +1,9 @@
-package ai.smartassets.challenge.model;
+package ai.smartassets.challenge.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@Data
+@Data @AllArgsConstructor
 public class Brand {
 
     private String brandId;
