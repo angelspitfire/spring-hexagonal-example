@@ -47,7 +47,7 @@ class CampaignRepositoryAdapterTest {
 
     @Test
     void save() {
-        CampaignEntity campaignEntity = new CampaignEntity("1", "Test Campaign", "Description");
+        CampaignEntity campaignEntity = new CampaignEntity("1", "Test Campaign", "Description", null);
         Campaign campaign = new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
         when(campaignRepository.save(campaignEntity)).thenReturn(campaignEntity);
 
@@ -81,7 +81,7 @@ class CampaignRepositoryAdapterTest {
 
         campaignRepositoryAdapter.delete(campaign);
 
-        CampaignEntity entity = new CampaignEntity(campaign.getCampaignId(), campaign.getName(), campaign.getDescription());
+        CampaignEntity entity = new CampaignEntity(campaign.getCampaignId(), campaign.getName(), campaign.getDescription(), null);
 
         verify(campaignRepository).delete(entity);
     }

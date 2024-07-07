@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.port.in;
 
 import ai.smartassets.challenge.domain.Campaign;
+import ai.smartassets.challenge.domain.Creative;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
@@ -16,4 +17,10 @@ public interface ManageCampaignUseCase {
     Optional<Campaign> updateCampaign(String campaignId, Campaign campaign);
 
     boolean deleteCampaign(String campaignId);
+
+    Campaign createCampaignForBrand(String brandId, Campaign campaign);
+
+    List<Campaign> findCampaignsByBrandId(String brandId);
+
+    List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId);
 }
