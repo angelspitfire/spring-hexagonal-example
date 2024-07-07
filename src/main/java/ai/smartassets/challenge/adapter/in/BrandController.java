@@ -66,6 +66,12 @@ public class BrandController {
         return ResponseEntity.ok(createdCampaign);
     }
 
+    @GetMapping("/{brandId}/campaigns")
+    public ResponseEntity<List<Campaign>> listCampaignsForBrand(@PathVariable String brandId) {
+        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId);
+        return ResponseEntity.ok(campaigns);
+    }
+
     @GetMapping("/brands/{brandId}/campaigns/{campaignId}/creatives")
     public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId, @PathVariable String campaignId) {
         // TODO: Add logic to verify that the campaign belongs to the brand
