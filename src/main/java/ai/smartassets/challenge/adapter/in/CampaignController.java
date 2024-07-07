@@ -19,11 +19,11 @@ public class CampaignController {
         this.manageCampaignUseCase = manageCampaignUseCase;
     }
 
-    @PostMapping
-    public ResponseEntity<Campaign> createCampaign(@RequestBody Campaign campaign) {
-        Campaign createdCampaign = manageCampaignUseCase.createCampaign(campaign);
-        return ResponseEntity.ok(createdCampaign);
-    }
+//    @PostMapping
+//    public ResponseEntity<Campaign> createCampaign(@RequestBody Campaign campaign) {
+//        Campaign createdCampaign = manageCampaignUseCase.createCampaign(campaign);
+//        return ResponseEntity.ok(createdCampaign);
+//    }
 
     @GetMapping
     public ResponseEntity<List<Campaign>> listCampaigns(@RequestParam(value = "page", defaultValue = "0") int page,
