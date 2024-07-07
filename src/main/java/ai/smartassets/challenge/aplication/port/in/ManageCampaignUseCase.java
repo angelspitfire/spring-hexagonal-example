@@ -20,7 +20,7 @@ public interface ManageCampaignUseCase {
 
     Campaign createCampaignForBrand(String brandId, Campaign campaign);
 
-    List<Campaign> findCampaignsByBrandId(String brandId);
+    List<Campaign> findCampaignsByBrandId(String brandId, PageRequest pageRequest);
 
-    List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId);
+    List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest);
 }

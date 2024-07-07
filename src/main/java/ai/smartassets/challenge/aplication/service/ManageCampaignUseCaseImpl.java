@@ -100,14 +100,14 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public List<Campaign> findCampaignsByBrandId(String brandId) {
-        return campaignRepository.findByBrandId(brandId).stream()
+    public List<Campaign> findCampaignsByBrandId(String brandId, PageRequest pageRequest) {
+        return campaignRepository.findByBrandId(brandId,  pageRequest).stream()
                 .map(ManageCampaignUseCaseImpl::getCampaign)
                 .toList();
     }
 
     @Override
-    public List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId) {
+    public List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest) {
 
         if (brandId == null || brandId.trim().isEmpty()) {
             throw new IllegalArgumentException("Brand ID cannot be null or empty");
@@ -122,7 +122,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
             return new BrandNotFoundException("Brand with id " + brandId + " not found");
         });
 
-        CampaignEntity campaignEntity = campaignRepository.findByBrandIdAndId(brandId, campaignId)
+        CampaignEntity campaignEntity = campaignRepository.findByBrandIdAndId(brandId, campaignId, pageRequest)
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> {

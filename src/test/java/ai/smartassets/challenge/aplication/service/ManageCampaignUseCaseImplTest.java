@@ -16,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -157,9 +158,10 @@ class ManageCampaignUseCaseImplTest {
                 new CampaignEntity("camp1", "Campaign 1", "Description 1", brandId),
                 new CampaignEntity("camp2", "Campaign 2", "Description 2", brandId)
         );
-        when(campaignRepository.findByBrandId(brandId)).thenReturn(mockCampaignEntities);
+        when(campaignRepository.findByBrandId(anyString(), any(Pageable.class))).thenReturn(mockCampaignEntities);
 
-        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
 
         assertEquals(2, campaigns.size());
         assertEquals("Campaign 1", campaigns.get(0).getName());
@@ -179,16 +181,19 @@ class ManageCampaignUseCaseImplTest {
                 new CreativeEntity("creative1", "Creative 1", "Description 1", "url1", campaignId),
                 new CreativeEntity("creative2", "Creative 2", "Description 2", "url2", campaignId)
         );
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+
         when(brandRepository.findById(brandId)).thenReturn(Optional.of(mockBrandEntity));
-        when(campaignRepository.findByBrandIdAndId(brandId, campaignId)).thenReturn(mockCampaignEntities);
+        when(campaignRepository.findByBrandIdAndId(brandId, campaignId, pageRequest)).thenReturn(mockCampaignEntities);
         when(creativeRepository.findByCampaignId(campaignId)).thenReturn(mockCreativeEntities);
 
-        List<Creative> result = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId);
+        List<Creative> result = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
 
         assertEquals(2, result.size());
         assertEquals("Creative 1", result.get(0).getName());
         assertEquals("Creative 2", result.get(1).getName());
-        verify(campaignRepository).findByBrandIdAndId(brandId, campaignId);
+        verify(campaignRepository).findByBrandIdAndId(brandId, campaignId, pageRequest);
         verify(creativeRepository).findByCampaignId(campaignId);
     }
 }
