@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,10 +45,10 @@ class ManageBrandUseCaseImplTest {
         Page<Brand> brandPage = new PageImpl<>(Collections.singletonList(brand));
         when(brandRepositoryPort.findAll(any(PageRequest.class))).thenReturn(brandPage);
 
-        Page<Brand> result = manageBrandUseCase.listBrands(pageable);
+        List<Brand> result = manageBrandUseCase.listBrands(pageable);
 
         assertFalse(result.isEmpty());
-        assertEquals(brand, result.getContent().get(0));
+        assertEquals(brand, result.get(0));
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -26,8 +27,8 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Page<Campaign> listCampaigns(PageRequest pageRequest) {
-        return campaignRepository.findAll(pageRequest);
+    public List<Campaign> listCampaigns(PageRequest pageRequest) {
+        return campaignRepository.findAll(pageRequest).toList();
     }
 
     @Override
