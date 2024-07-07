@@ -67,14 +67,21 @@ public class BrandController {
     }
 
     @GetMapping("/{brandId}/campaigns")
-    public ResponseEntity<List<Campaign>> listCampaignsForBrand(@PathVariable String brandId) {
-        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId);
+    public ResponseEntity<List<Campaign>> listCampaignsForBrand(@PathVariable String brandId,
+                                                                @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                @RequestParam(value = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
         return ResponseEntity.ok(campaigns);
     }
 
     @GetMapping("/brands/{brandId}/campaigns/{campaignId}/creatives")
-    public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId, @PathVariable String campaignId) {
-        List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId);
+    public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId,
+                                                                   @PathVariable String campaignId,
+                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
+                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
         return ResponseEntity.ok(creatives);
     }
 }
