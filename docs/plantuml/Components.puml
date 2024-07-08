@@ -1,0 +1,48 @@
+@startuml
+!theme materia
+
+@startuml
+!theme materia
+
+package "Spring Boot Application" {
+    interface "Controller Port" as CP {
+        [BrandController]
+        [CampaignController]
+        [CreativeController]
+    }
+    interface "Service Port" as SP {
+        [BrandService]
+        [CampaignService]
+        [CreativeService]
+    }
+    interface "Repository Port" as RP {
+        [BrandRepository]
+        [CampaignRepository]
+        [CreativeRepository]
+    }
+
+    CP -down-> SP : uses
+    SP -down-> RP : uses
+
+    database "MongoDB" {
+        entity BrandDocument
+        entity CampaignDocument
+        entity CreativeDocument
+    }
+
+    RP ..> "MongoDB" : interacts
+}
+
+BrandController --> BrandService : HTTP requests
+CampaignController --> CampaignService : HTTP requests
+CreativeController --> CreativeService : HTTP requests
+
+BrandService --> BrandRepository : CRUD operations
+CampaignService --> CampaignRepository : CRUD operations
+CreativeService --> CreativeRepository : CRUD operations
+
+BrandRepository --> BrandDocument : queries
+CampaignRepository --> CampaignDocument : queries
+CreativeRepository --> CreativeDocument : queries
+
+@enduml

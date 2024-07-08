@@ -1,5 +1,5 @@
 @startuml
-!theme cerulean
+!theme plain
 
 left to right direction
 actor "Client" as client

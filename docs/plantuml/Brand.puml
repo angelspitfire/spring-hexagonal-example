@@ -1,5 +1,5 @@
 @startuml
-!theme materia
+!theme plain
 
 class BrandController {
     +createBrand(brand: Brand): ResponseEntity<Brand>
@@ -60,12 +60,24 @@ class CreativeRepository {
     +delete(creative: CreativeEntity): void
 }
 
+class MongoDBConfig {
+    +mongoTemplate(): MongoTemplate
+}
+
+class DataLoaderConfig {
+    +loadData(): CommandLineRunner
+}
+
 BrandController --> ManageBrandUseCase : uses
 BrandController --> ManageCampaignUseCase : uses
 BrandController --> ManageCreativeUseCase : uses
-
-ManageBrandUseCase ..> BrandRepository : interacts
-ManageCampaignUseCase ..> CampaignRepository : interacts
-ManageCreativeUseCase ..> CreativeRepository : interacts
-
+ManageBrandUseCase --> BrandRepository : uses
+ManageCampaignUseCase --> CampaignRepository : uses
+ManageCreativeUseCase --> CreativeRepository : uses
+MongoDBConfig --> BrandRepository : injects
+MongoDBConfig --> CampaignRepository : injects
+MongoDBConfig --> CreativeRepository : injects
+DataLoaderConfig --> BrandRepository : injects
+DataLoaderConfig --> CampaignRepository : injects
+DataLoaderConfig --> CreativeRepository : injects
 @enduml

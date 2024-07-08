@@ -1,5 +1,5 @@
 @startuml
-!theme materia
+!theme plain
 
 class CreativeController {
     +createCreative(creative: Creative): ResponseEntity<Creative>

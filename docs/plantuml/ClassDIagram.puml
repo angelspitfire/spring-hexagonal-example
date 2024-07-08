@@ -1,5 +1,5 @@
 @startuml
-!theme materia
+!theme plain
 
 package "Controller Layer" {
     class BrandController {
@@ -45,64 +45,10 @@ package "Service Layer" {
     }
     class ManageCreativeUseCaseImpl {
         +createCreative(creative: Creative): Creative
-        +listCreatives(pageRequest: PageRequest): List<Creative>
+        +listCreatives(pageable: Pageable): List<Creative>
         +getCreativeById(creativeId: String): Optional<Creative>
         +updateCreative(creativeId: String, creative: Creative): Optional<Creative>
         +deleteCreative(creativeId: String): boolean
     }
+
 }
-
-package "Repository Layer" {
-    class BrandRepository {
-    }
-    class CampaignRepository {
-    }
-    class CreativeRepository {
-    }
-}
-
-package "Model Layer" {
-    class BrandEntity {
-        -id: String
-        -name: String
-        -description: String
-    }
-    class CampaignEntity {
-        -id: String
-        -name: String
-        -description: String
-        -brandId: String
-    }
-    class CreativeEntity {
-        -id: String
-        -name: String
-        -description: String
-        -creativeUrl: String
-        -campaignId: String
-    }
-}
-
-package "Domain Layer" {
-    class Brand {
-    }
-    class Campaign {
-    }
-    class Creative {
-    }
-}
-
-BrandController --> ManageBrandUseCaseImpl : uses
-BrandController --> ManageCampaignUseCaseImpl : uses
-BrandController --> ManageCreativeUseCaseImpl : uses
-CampaignController --> ManageCampaignUseCaseImpl : uses
-CreativeController --> ManageCreativeUseCaseImpl : uses
-
-package "Infrastructure Layer" {
-    class MongoDBConfig {
-        +mongoTemplate(): MongoTemplate
-    }
-}
-
-MongoDBConfig ..> "Repository Layer"
-
-@enduml

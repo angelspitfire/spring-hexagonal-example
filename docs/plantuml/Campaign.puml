@@ -1,5 +1,5 @@
 @startuml
-!theme materia
+!theme plain
 
 class CampaignController {
     +createCampaign(campaign: Campaign): ResponseEntity<Campaign>
@@ -27,8 +27,16 @@ class CampaignRepository {
     +delete(campaign: CampaignEntity): void
 }
 
+class CreativeRepository {
+    +findByCampaignId(campaignId: String): List<CreativeEntity>
+    +findById(creativeId: String): Optional<CreativeEntity>
+    +save(creative: CreativeEntity): CreativeEntity
+    +delete(creative: CreativeEntity): void
+}
+
 CampaignController --> ManageCampaignUseCase : uses
 
 ManageCampaignUseCase ..> CampaignRepository : interacts
+ManageCampaignUseCase ..> CreativeRepository : interacts
 
 @enduml

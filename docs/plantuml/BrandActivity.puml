@@ -1,0 +1,43 @@
+@startuml
+'https://plantuml.com/activity-diagram-beta
+
+start
+:Display "Brand Management Menu";
+repeat
+  :User selects an option;
+  if (Option = Create) then
+    :Prompt for brand details;
+    :Save brand;
+    :Display "Brand created successfully";
+  elseif (Option = Update) then
+    :Prompt for brand ID;
+    if (Brand exists) then
+      :Prompt for new brand details;
+      :Update brand;
+      :Display "Brand updated successfully";
+    else
+      :Display "Brand not found";
+    endif
+  elseif (Option = Delete) then
+    :Prompt for brand ID;
+    if (Brand exists) then
+      :Delete brand;
+      :Display "Brand deleted successfully";
+    else
+      :Display "Brand not found";
+    endif
+  elseif (Option = View Details) then
+    :Prompt for brand ID;
+    if (Brand exists) then
+      :Display brand details;
+    else
+      :Display "Brand not found";
+    endif
+  else (Option = Exit)
+    -[hidden]-> (no)
+  endif
+repeat while (Option != Exit)
+-> (no)
+stop
+
+@enduml

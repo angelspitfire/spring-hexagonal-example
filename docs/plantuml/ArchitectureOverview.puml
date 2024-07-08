@@ -1,4 +1,3 @@
-```plantuml
 @startuml
 !theme materia
 
@@ -44,9 +43,9 @@ package "Service Layer" {
 }
 
 package "Repository Layer" {
-    class BrandRepository 
-    class CampaignRepository 
-    class CreativeRepository 
+    class BrandRepository
+    class CampaignRepository
+    class CreativeRepository
 }
 
 package "Model Layer" {
@@ -71,9 +70,9 @@ package "Model Layer" {
 }
 
 package "Domain Layer" {
-    class Brand 
-    class Campaign 
-    class Creative 
+    class Brand
+    class Campaign
+    class Creative
 }
 
 BrandController --> "Service Layer"
@@ -86,9 +85,12 @@ package "Infrastructure Layer" {
     class MongoDBConfig {
         +mongoTemplate(): MongoTemplate
     }
+    class DataLoaderConfig {
+        +loadData(): CommandLineRunner
+    }
 }
 
 MongoDBConfig ..> "Repository Layer"
+DataLoaderConfig ..> "Infrastructure Layer"
 
 @enduml
-```
