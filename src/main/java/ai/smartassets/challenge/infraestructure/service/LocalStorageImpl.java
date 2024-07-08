@@ -10,11 +10,11 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
-public class FileStorageServiceImpl implements FileStorageService {
+public class LocalStorageImpl implements FileStorageService {
 
     private final String storageLocation;
 
-    public FileStorageServiceImpl(@Value("${file.storage.location}") String storageLocation) {
+    public LocalStorageImpl(@Value("${file.storage.location}") String storageLocation) {
         this.storageLocation = storageLocation;
     }
 
