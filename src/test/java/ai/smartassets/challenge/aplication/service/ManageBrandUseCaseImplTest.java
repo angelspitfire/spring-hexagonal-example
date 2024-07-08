@@ -90,11 +90,12 @@ class ManageBrandUseCaseImplTest {
     void deleteBrand() {
         BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(brand));
-        Mockito.doNothing().when(brandRepositoryPort).delete(any(BrandEntity.class));
+        Mockito.doNothing().when(brandRepositoryPort).deleteById("1");
 
         boolean result = manageBrandUseCase.deleteBrand("1");
 
         assertTrue(result);
-        Mockito.verify(brandRepositoryPort, Mockito.times(1)).delete(brand);
+        Mockito.verify(brandRepositoryPort, Mockito.times(1)).findById("1");
+        Mockito.verify(brandRepositoryPort, Mockito.times(1)).deleteById("1");
     }
 }

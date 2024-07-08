@@ -15,4 +15,8 @@ public interface BrandRepositoryPort {
     void delete(BrandEntity brandEntity);
 
     Optional<BrandEntity> findById(String id);
+
+    boolean existsById(String id);
+
+    void deleteById(String id);
 }
