@@ -18,7 +18,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@Service @Slf4j
+@Service
+@Slf4j
 public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     private final CampaignRepositoryPort campaignRepository;
@@ -95,9 +96,18 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     @Override
     public List<Campaign> findCampaignsByBrandId(String brandId, PageRequest pageRequest) {
-        return campaignRepository.findByBrandId(brandId,  pageRequest).stream()
+        validateBrandIdForExistence(brandId);
+
+        log.info("Starting to find campaigns for brandId: {}", brandId);
+
+        List<Campaign> campaigns = campaignRepository.findByBrandId(brandId, pageRequest)
+                .stream()
                 .map(ManageCampaignUseCaseImpl::getCampaign)
                 .toList();
+
+        log.info("Found {} campaigns for brandId: {}", campaigns.size(), brandId);
+
+        return campaigns;
     }
 
     @Override
@@ -129,6 +139,26 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
         return creativeEntities.stream()
                 .map(ManageCampaignUseCaseImpl::getCreative)
                 .toList();
+    }
+
+    private void validateBrandIdForExistence(String brandId) {
+        validateBrandIdNotEmpty(brandId);
+        ensureBrandExists(brandId);
+    }
+
+    private void validateBrandIdNotEmpty(String brandId) {
+        if (brandId == null || brandId.trim().isEmpty()) {
+            throw new IllegalArgumentException("Brand ID cannot be null or empty.");
+        }
+    }
+
+    private void ensureBrandExists(String brandId) {
+        boolean brandExists = brandRepository.existsById(brandId);
+        if (!brandExists) {
+            String errorMessage = String.format("Brand with id %s not found.", brandId);
+            log.error(errorMessage);
+            throw new BrandNotFoundException(errorMessage);
+        }
     }
 
     private static Campaign getCampaign(CampaignEntity campaignEntity) {
