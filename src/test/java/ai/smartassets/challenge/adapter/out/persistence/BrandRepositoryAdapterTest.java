@@ -19,6 +19,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 @SpringBootTest
 class BrandRepositoryAdapterTest {
@@ -31,7 +32,7 @@ class BrandRepositoryAdapterTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         brandRepositoryAdapter = new BrandRepositoryAdapter(brandMongoRepository);
     }
 

@@ -10,7 +10,6 @@ import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 class ManageCampaignUseCaseImplTest {
 
@@ -39,7 +39,7 @@ class ManageCampaignUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         manageCampaignUseCase = new ManageCampaignUseCaseImpl(campaignRepository, brandRepository, creativeRepository);
     }
 
@@ -169,32 +169,31 @@ class ManageCampaignUseCaseImplTest {
         assertEquals("Campaign 2", campaigns.get(1).getName());
     }
 
+
     @Test
     void findCreativesByBrandIdAndCampaignId_ReturnsCorrectCreatives() {
-        String brandId = "testBrandId";
-        String campaignId = "testCampaignId";
-        BrandEntity mockBrandEntity = new BrandEntity(brandId, "Brand Name", "Brand Description");
-        List<CampaignEntity> mockCampaignEntities = List.of(
-                new CampaignEntity(campaignId, "Campaign Name", "Campaign Description", brandId)
-        );
-
-        List<CreativeEntity> mockCreativeEntities = Arrays.asList(
-                new CreativeEntity("creative1", "Creative 1", "Description 1", "url1", campaignId),
-                new CreativeEntity("creative2", "Creative 2", "Description 2", "url2", campaignId)
-        );
-
+        String brandId = "brand123";
+        String campaignId = "camp123";
         PageRequest pageRequest = PageRequest.of(0, 10);
 
-        when(brandRepository.findById(brandId)).thenReturn(Optional.of(mockBrandEntity));
-        when(campaignRepository.findByBrandIdAndId(brandId, campaignId, pageRequest)).thenReturn(mockCampaignEntities);
-        when(creativeRepository.findByCampaignId(campaignId)).thenReturn(mockCreativeEntities);
+        BrandEntity brandEntity = new BrandEntity(brandId, "Brand Name", "Brand Description");
+        CampaignEntity campaignEntity = new CampaignEntity(campaignId, "Campaign Name", "Campaign Description", brandId);
+        CreativeEntity creativeEntity1 = new CreativeEntity("1", "Creative 1", "Description 1", "http://test.com/creative1.pdf", campaignId);
+        CreativeEntity creativeEntity2 = new CreativeEntity("2", "Creative 2", "Description 2", "http://test.com/creative2.pdf", campaignId);
+        List<CreativeEntity> creativeEntities = List.of(creativeEntity1, creativeEntity2);
 
-        List<Creative> result = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
+        when(brandRepository.findById(brandId)).thenReturn(Optional.of(brandEntity));
+        when(campaignRepository.findById(campaignId)).thenReturn(Optional.of(campaignEntity));
+        when(creativeRepository.findByCampaignId(campaignId, pageRequest)).thenReturn(creativeEntities);
 
-        assertEquals(2, result.size());
-        assertEquals("Creative 1", result.get(0).getName());
-        assertEquals("Creative 2", result.get(1).getName());
-        verify(campaignRepository).findByBrandIdAndId(brandId, campaignId, pageRequest);
-        verify(creativeRepository).findByCampaignId(campaignId);
+        List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
+
+        assertEquals(2, creatives.size());
+        assertEquals("Creative 1", creatives.get(0).getName());
+        assertEquals("Creative 2", creatives.get(1).getName());
+
+        verify(brandRepository).findById(brandId);
+        verify(campaignRepository).findById(campaignId);
+        verify(creativeRepository).findByCampaignId(campaignId, pageRequest);
     }
 }

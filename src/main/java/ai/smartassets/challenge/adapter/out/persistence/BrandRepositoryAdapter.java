@@ -21,14 +21,6 @@ public class BrandRepositoryAdapter implements BrandRepositoryPort {
         this.brandRepository = brandRepository;
     }
 
-    private static BrandEntity getEntity(Brand brand) {
-        return new BrandEntity(brand.getBrandId(), brand.getName(), brand.getDescription());
-    }
-
-    private static Brand getBrand(BrandEntity brandEntity) {
-        return new Brand(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
-    }
-
     @Override
     public BrandEntity save(BrandEntity brandEntity) {
         return brandRepository.save(brandEntity);
@@ -57,5 +49,13 @@ public class BrandRepositoryAdapter implements BrandRepositoryPort {
     @Override
     public void deleteById(String id) {
         brandRepository.deleteById(id);
+    }
+
+    private static BrandEntity getEntity(Brand brand) {
+        return new BrandEntity(brand.getBrandId(), brand.getName(), brand.getDescription());
+    }
+
+    private static Brand getBrand(BrandEntity brandEntity) {
+        return new Brand(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
     }
 }

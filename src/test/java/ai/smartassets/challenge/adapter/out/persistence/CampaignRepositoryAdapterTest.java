@@ -15,6 +15,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 class CampaignRepositoryAdapterTest {
 
@@ -25,7 +26,7 @@ class CampaignRepositoryAdapterTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         campaignRepositoryAdapter = new CampaignRepositoryAdapter(campaignRepository);
     }
 

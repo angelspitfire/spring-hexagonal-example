@@ -17,6 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.openMocks;
 
 class ManageCreativeUseCaseImplTest {
 
@@ -27,7 +28,7 @@ class ManageCreativeUseCaseImplTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        openMocks(this);
         manageCreativeUseCase = new ManageCreativeUseCaseImpl(creativeRepository);
     }
 
