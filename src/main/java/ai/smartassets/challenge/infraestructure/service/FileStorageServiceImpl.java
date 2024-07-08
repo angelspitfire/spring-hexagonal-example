@@ -20,31 +20,24 @@ public class FileStorageServiceImpl implements FileStorageService {
 
     @Override
     public String storeFile(MultipartFile file) {
-
         if (file == null) {
             throw new RuntimeException("Cannot store null file");
         }
 
-        Path storagePath = Paths.get(storageLocation);
-        if (!Files.exists(storagePath)) {
-            try {
-                Files.createDirectories(storagePath);
-            } catch (IOException e) {
-                throw new RuntimeException("Could not create storage directory", e);
-            }
-        }
-
-        String originalFileName = file.getOriginalFilename();
-        String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-        String fileName = UUID.randomUUID() + fileExtension;
-
-        Path targetLocation = storagePath.resolve(fileName);
         try {
-            file.transferTo(targetLocation);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not store file " + fileName, e);
-        }
+            Path storagePath = Paths.get(storageLocation).toAbsolutePath().normalize();
+            Files.createDirectories(storagePath); // Ensure the directory exists
 
-        return targetLocation.toString();
+            String originalFileName = file.getOriginalFilename();
+            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            String fileName = UUID.randomUUID() + fileExtension;
+
+            Path targetLocation = storagePath.resolve(fileName);
+            file.transferTo(targetLocation.toFile());
+
+            return targetLocation.toString();
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to store file", e);
+        }
     }
 }
