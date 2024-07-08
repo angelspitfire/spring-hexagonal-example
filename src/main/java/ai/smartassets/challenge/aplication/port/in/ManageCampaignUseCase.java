@@ -1,5 +1,6 @@
 package ai.smartassets.challenge.aplication.port.in;
 
+import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
 import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
 import org.springframework.data.domain.PageRequest;
@@ -23,4 +24,6 @@ public interface ManageCampaignUseCase {
     List<Campaign> findCampaignsByBrandId(String brandId, PageRequest pageRequest);
 
     List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest);
+
+    Creative uploadCreativeForCampaign(String brandId, String campaignId, CreativeUploadDTO creativeUploadDTO);
 }

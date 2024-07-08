@@ -7,6 +7,7 @@ import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
+import ai.smartassets.challenge.infraestructure.service.FileStorageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,12 +35,15 @@ class ManageCampaignUseCaseImplTest {
     @Mock
     private CreativeRepositoryPort creativeRepository;
 
+    @Mock
+    private FileStorageService fileStorageService;
+
     private ManageCampaignUseCaseImpl manageCampaignUseCase;
 
     @BeforeEach
     void setUp() {
         openMocks(this);
-        manageCampaignUseCase = new ManageCampaignUseCaseImpl(campaignRepository, brandRepository, creativeRepository);
+        manageCampaignUseCase = new ManageCampaignUseCaseImpl(campaignRepository, brandRepository, creativeRepository, fileStorageService);
     }
 
     @Test

@@ -1,5 +1,6 @@
 package ai.smartassets.challenge.adapter.in;
 
+import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.domain.Brand;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -76,27 +78,22 @@ public class BrandController {
     }
 
     @GetMapping("/brands/{brandId}/campaigns/{campaignId}/creatives")
-    public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId,
-                                                                   @PathVariable String campaignId,
-                                                                   @RequestParam(value = "page", defaultValue = "0") int page,
-                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
+    public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId, @PathVariable String campaignId, @RequestParam(value = "page", defaultValue = "0") int page,@RequestParam(value = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
         List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
         return ResponseEntity.ok(creatives);
     }
 
-//    @PostMapping("/{brandId}/campaigns/{campaignId}/creatives/upload")
-//    public ResponseEntity<Creative> uploadCreative(@PathVariable String brandId,
-//                                                   @PathVariable String campaignId,
-//                                                   @RequestParam("file") MultipartFile file,
-//                                                   @RequestParam("name") String name,
-//                                                   @RequestParam("description") String description) {
-//        CreativeUploadDTO creativeUploadDTO = new CreativeUploadDTO();
-//        creativeUploadDTO.setName(name);
-//        creativeUploadDTO.setDescription(description);
-//        creativeUploadDTO.setFile(file);
-//
-//        Creative createdCreative = manageCampaignUseCase.uploadCreativeForCampaign(brandId, campaignId, creativeUploadDTO);
-//        return ResponseEntity.ok(createdCreative);
-//    }
+    @PostMapping("/{brandId}/campaigns/{campaignId}/creatives/upload")
+    public ResponseEntity<Creative> uploadCreative(@PathVariable String brandId,
+                                                   @PathVariable String campaignId,
+                                                   @RequestParam("file") MultipartFile file,
+                                                   @RequestParam("name") String name,
+                                                   @RequestParam("description") String description) {
+
+        CreativeUploadDTO creativeUploadDTO = new CreativeUploadDTO(name, description, file);
+
+        Creative createdCreative = manageCampaignUseCase.uploadCreativeForCampaign(brandId, campaignId, creativeUploadDTO);
+        return ResponseEntity.ok(createdCreative);
+    }
 }
