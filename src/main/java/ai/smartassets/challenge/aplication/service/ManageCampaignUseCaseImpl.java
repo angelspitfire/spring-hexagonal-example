@@ -1,14 +1,15 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.exception.CampaignNotFoundException;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.aplication.port.out.*;
 import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
-import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
+import ai.smartassets.challenge.infraestructure.service.FileStorageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -16,8 +17,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -26,12 +25,14 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     private final CampaignRepositoryPort campaignRepository;
     private final BrandRepositoryPort brandRepository;
     private final CreativeRepositoryPort creativeRepository;
+    private final FileStorageService fileStorageService;
 
     @Autowired
-    public ManageCampaignUseCaseImpl(CampaignRepositoryPort campaignRepository, BrandRepositoryPort brandRepository, CreativeRepositoryPort creativeRepository) {
+    public ManageCampaignUseCaseImpl(CampaignRepositoryPort campaignRepository, BrandRepositoryPort brandRepository, CreativeRepositoryPort creativeRepository, FileStorageService fileStorageService) {
         this.campaignRepository = campaignRepository;
         this.brandRepository = brandRepository;
         this.creativeRepository = creativeRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     @Override
@@ -138,6 +139,36 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
                 .stream()
                 .map(ManageCampaignUseCaseImpl::getCreative)
                 .toList();
+    }
+
+    @Override
+    public Creative uploadCreativeForCampaign(String brandId, String campaignId, CreativeUploadDTO creativeUploadDTO) {
+
+        brandRepository.findById(brandId)
+                .orElseThrow(() -> new BrandNotFoundException("Brand with id " + brandId + " not found"));
+
+        campaignRepository.findById(campaignId)
+                .orElseThrow(() -> new CampaignNotFoundException("Campaign with id " + campaignId + " not found"));
+
+        String fileLocation = fileStorageService.storeFile(creativeUploadDTO.getFile());
+
+        CreativeEntity creative = new CreativeEntity();
+        creative.setName(creativeUploadDTO.getName());
+        creative.setDescription(creativeUploadDTO.getDescription());
+        creative.setCreativeUrl(fileLocation);
+        creative.setCampaignId(campaignId);
+
+        CreativeEntity savedCreative = creativeRepository.save(creative);
+
+        return convertToCreativeDomain(savedCreative);
+    }
+
+    private Creative convertToCreativeDomain(CreativeEntity savedCreative) {
+        return new Creative(savedCreative.getId(),
+                savedCreative.getName(),
+                savedCreative.getDescription(),
+                savedCreative.getCreativeUrl(),
+                savedCreative.getCampaignId());
     }
 
     private void validateBrandIdForExistence(String brandId) {

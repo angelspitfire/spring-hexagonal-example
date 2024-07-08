@@ -10,6 +10,10 @@ springdoc:
   api-docs:
     path: "/api-docs"
 
+file:
+  storage:
+    location: /path/to/storage
+
 spring:
   main:
     allow-bean-definition-overriding: true
