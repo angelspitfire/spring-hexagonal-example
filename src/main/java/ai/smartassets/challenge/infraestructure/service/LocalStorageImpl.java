@@ -26,9 +26,12 @@ public class LocalStorageImpl implements FileStorageService {
 
         try {
             Path storagePath = Paths.get(storageLocation).toAbsolutePath().normalize();
-            Files.createDirectories(storagePath); // Ensure the directory exists
+            Files.createDirectories(storagePath);
 
             String originalFileName = file.getOriginalFilename();
+            if (originalFileName == null || originalFileName.isEmpty()) {
+                throw new RuntimeException("Original filename is null or empty");
+            }
             String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
             String fileName = UUID.randomUUID() + fileExtension;
 
