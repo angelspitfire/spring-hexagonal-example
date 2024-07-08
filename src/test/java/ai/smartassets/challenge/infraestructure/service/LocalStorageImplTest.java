@@ -13,10 +13,10 @@ import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileStorageServiceImplTest {
+class LocalStorageImplTest {
 
     @InjectMocks
-    private FileStorageServiceImpl fileStorageService;
+    private LocalStorageImpl fileStorageService;
 
     @TempDir
     Path tempDir;
@@ -25,7 +25,7 @@ class FileStorageServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         String storageLocation = tempDir.toString();
-        fileStorageService = new FileStorageServiceImpl(storageLocation);
+        fileStorageService = new LocalStorageImpl(storageLocation);
     }
 
     @Test
