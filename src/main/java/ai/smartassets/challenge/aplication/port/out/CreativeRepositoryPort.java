@@ -2,6 +2,7 @@ package ai.smartassets.challenge.aplication.port.out;
 
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -17,5 +18,5 @@ public interface CreativeRepositoryPort {
 
     void delete(CreativeEntity creative);
 
-    List<CreativeEntity> findByCampaignId(String campaignId);
+    List<CreativeEntity> findByCampaignId(String campaignId, PageRequest pageRequest);
 }

@@ -6,6 +6,7 @@ import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.aplication.port.out.*;
 import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
+import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -126,17 +127,15 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
             return new BrandNotFoundException("Brand with id " + brandId + " not found");
         });
 
-        CampaignEntity campaignEntity = campaignRepository.findByBrandIdAndId(brandId, campaignId, pageRequest)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> {
-                    log.error("Campaign with id {} not found or does not belong to brand with id {}", campaignId, brandId); // Logging
-                    return new CampaignNotFoundException("Campaign with id " + campaignId + " not found or does not belong to brand with id " + brandId);
-                });
+        campaignRepository.findById(campaignId).orElseThrow(() -> {
+            log.error("Campaign with id {} not found", campaignId); // Logging
+            return new CampaignNotFoundException("Campaign with id " + campaignId + " not found");
+        });
 
-        List<CreativeEntity> creativeEntities = creativeRepository.findByCampaignId(campaignId);
-        log.info("Found {} creatives for campaignId {}", creativeEntities.size(), campaignId); // Logging
-        return creativeEntities.stream()
+        log.info("Starting to find creatives for brandId: {} and campaignId: {}", brandId, campaignId); // Logging
+
+        return creativeRepository.findByCampaignId(campaignId, pageRequest)
+                .stream()
                 .map(ManageCampaignUseCaseImpl::getCreative)
                 .toList();
     }
@@ -163,10 +162,6 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
     private static Campaign getCampaign(CampaignEntity campaignEntity) {
         return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
-    }
-
-    private Function<CampaignEntity, Stream<? extends CreativeEntity>> getCampaignEntity() {
-        return campaignEntity -> creativeRepository.findByCampaignId(campaignEntity.getId()).stream();
     }
 
     private static Creative getCreative(CreativeEntity e) {

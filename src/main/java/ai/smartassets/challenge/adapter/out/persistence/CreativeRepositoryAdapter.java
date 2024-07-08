@@ -5,6 +5,7 @@ import ai.smartassets.challenge.aplication.port.out.CreativeRepositoryPort;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +43,7 @@ public class CreativeRepositoryAdapter implements CreativeRepositoryPort {
     }
 
     @Override
-    public List<CreativeEntity> findByCampaignId(String campaignId) {
+    public List<CreativeEntity> findByCampaignId(String campaignId, PageRequest pageRequest) {
         return creativeRepository.findByCampaignId(campaignId);
     }
 }
