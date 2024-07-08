@@ -1,49 +1,76 @@
-# Project Overview
+# Project Architecture and Execution Guide
 
-## Introduction
-This document provides a comprehensive overview of our Spring Boot-based application, focusing on brand, campaign, and creative management. The solution leverages a microservices architecture, ensuring scalability and flexibility.
+## Overview of the Solution
+
+This project aims to provide a comprehensive system for managing brands, campaigns, and creatives within a digital advertising platform. Leveraging the power of Spring Boot and MongoDB, it offers a robust backend infrastructure capable of handling a variety of advertising operations efficiently. Designed with scalability and maintenance in mind, this solution is well-suited for both small startups and large enterprises looking to optimize their advertising workflows.
+
+![Components diagram](img/Components-0.png "Components diagram")
 
 ## Architecture Overview
-The application is structured around several key components:
 
-- **Spring Boot Application**: Serves as the backbone, facilitating RESTful APIs for brand, campaign, and creative management.
-- **MongoDB**: Used for persisting data across different entities.
-- **Layered Architecture**: Includes Controller, Service, and Repository layers, each responsible for specific aspects of the application logic.
+The system's architecture is designed following the Hexagonal Architecture approach, also known as Ports and Adapters. This design pattern aims to create a loosely coupled application that isolates the core logic from external concerns. By structuring the application into several key layers, each responsible for a distinct aspect of the application's functionality, we ensure flexibility and ease of maintenance:
 
-Refer to the component diagrams in `docs/ArchitectureOverview.puml` and `docs/Other.puml` for more details.
+- **Controller Layer (Adapters)**: Acts as the primary entry point for HTTP requests, exposing RESTful APIs for interacting with the application. This layer adapts requests from the external world into a format that the application can use.
+- **Service Layer (Application Core)**: Implements the business logic and use case execution. It serves as the application's core, where the main functionalities and rules are processed.
+- **Repository Layer (Adapters)**: Manages CRUD operations with the MongoDB database, acting as an adapter that allows the application core to interact with the database without being coupled to it.
+- **Model Layer**: Defines the structure of the data entities used across the application, central to the application's domain.
+- **Domain Layer**: Represents the core business logic and entities. It is the heart of the application, where the business rules and domain logic reside.
+- **Infrastructure Layer (Adapters)**: Configures the technical infrastructure, including database connections and other system-wide settings. This layer includes adapters for various external interfaces the application interacts with.
 
-## Hexagonal Architecture
+By adhering to the Hexagonal Architecture, we ensure that the application's core logic is independent of external interfaces and frameworks, making the system more resilient to changes in technology or business requirements.
 
-This project adopts the Hexagonal Architecture pattern to promote loose coupling and separation of concerns. This architectural style allows us to isolate the core logic of our application from external influences and technologies, making the system more adaptable and easier to test.
+**Key Components**
+![Components diagram](img/Components-0.png "Components diagram")
 
-### Inside the Hexagon: Domain and Application Layers
+**Classes**
+![Architecture Overview](img/ArchitectureOverview-0.png "Architecture Overview")
 
-- **Domain Layer**: Contains the business logic and domain models (e.g., `Brand`, `Campaign`, `Creative`). This layer is at the heart of the application, encapsulating the rules and processes specific to the business.
-- **Application Layer**: Acts as a bridge between the domain layer and the outside world. It contains application services (e.g., `ManageBrandUseCase`, `ManageCampaignUseCase`, `ManageCreativeUseCase`) that orchestrate the execution of business logic.
+## Technical Stack
 
-### Outside the Hexagon: Ports and Adapters
-
-- **Ports**: Defined by interfaces, ports represent the points of interaction between the application and the outside world. For example, `BrandRepository`, `CampaignRepository`, and `CreativeRepository` can be seen as outgoing ports to the database, while the REST controllers serve as incoming ports for HTTP requests.
-- **Adapters**: Implement the ports to work with specific technologies. For instance, the Spring Data MongoDB repositories (`BrandRepositoryImpl`, `CampaignRepositoryImpl`, `CreativeRepositoryImpl`) are adapters for the database, and the Spring MVC controllers (`BrandController`, `CampaignController`, `CreativeController`) are adapters for the web API.
-
-By adhering to the Hexagonal Architecture, we ensure that changes in external technologies or platforms have minimal impact on the core business logic, thereby enhancing the maintainability and scalability of our application.
-
-## Class Diagrams
-Class diagrams for `Brand`, `Campaign`, and `Creative` entities are detailed in `docs/Brand.puml`, illustrating the relationships and fields for each entity.
-
-## Use Case Diagram
-The use case diagram in `docs/UseCase.puml` outlines the system's functionality from a client's perspective, including creating, listing, updating, and deleting brands, campaigns, and creatives.
-
-## Development Environment
-- **Programming Language**: Java
+- **Programming Language**: Java 17
 - **Framework**: Spring Boot
+- **Database**: MongoDB (embedded and real instance on docker)
 - **Build Tool**: Maven
 
-## Getting Started
-To set up the project locally:
-1. Clone the repository.
-2. Install dependencies using Maven.
-3. Run the application through your IDE or command line.
+## Running the Application
 
-## Conclusion
-This project aims to provide a robust solution for managing brands, campaigns, and creatives. Future improvements may include enhanced analytics, deeper integration with social media platforms, and improved UI/UX for the administrative dashboard.
+To get the application up and running on your local machine, follow these steps:
+
+1. **Prerequisites**:
+   - Java 17 or newer installed.
+   - MongoDB running on the default port (27017).
+   - Maven installed for building the application.
+   - Docker installed (optional, for running MongoDB in a container).
+   - Docker Compose installed (optional, for running MongoDB in a container).
+
+2. **Clone the Repository**:
+   Clone the project repository to your local machine using the following command:
+   ```shell
+   git clone git@github.com:angelspitfire/smart-assets-be-challenge.git
+   cd smart-assets-be-challenge
+    ```
+3. **Build the Application**:
+```shell
+   mvn clean package
+   ```
+4. **Run the Application**:
+```shell
+   java -jar target/smart-assets-be-challenge-0.0.1-SNAPSHOT.jar
+   ```
+or alternatively, you can run the application using the following command:
+```shell
+   mvn spring-boot:run
+   ```
+or using docker-compose:
+```shell
+   docker-compose up
+   ```
+5. **Access the Application**:
+    The application will be accessible at `http://localhost:8080`. You can use tools like Postman or cURL to interact with the RESTful APIs provided by the application.
+    The Swagger UI is also available at `http://localhost:8080/swagger-ui.html`, providing a user-friendly interface for exploring and testing the APIs.
+
+6. **Consideratiions**:
+    - The application uses an embedded MongoDB for local use instance by default. If you prefer to use a standalone MongoDB instance, you can configure the connection details in the `application.yaml` file.
+    - The application runs a MongoDB instace whe running with docker-compose. You can run the following command to start the application with docker-compose. The reason behind this is to make it easier to run the application without the need to install MongoDB on your local machine due to a bug on apple silicon machines from de.flapdoodle,de.flapdoodle.embed.mongo.
+    - The application uses an in-memory database, which means that data will not persist between application restarts. For a production environment, you should configure a real MongoDB instance and provide the necessary connection details in the application configuration.
+    - The application is designed to be stateless, meaning that it does not store session data between requests. This design choice ensures scalability and fault tolerance, as each request is processed independently.
