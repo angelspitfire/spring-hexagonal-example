@@ -30,17 +30,17 @@ public class CampaignRepositoryAdapter implements CampaignRepositoryPort {
 
     @Override
     public Page<CampaignEntity> findAll(PageRequest pageRequest) {
-        return null;
+        return campaignRepository.findAll(pageRequest);
     }
 
     @Override
     public Optional<CampaignEntity> findById(String id) {
-        return Optional.empty();
+        return campaignRepository.findById(id);
     }
 
     @Override
     public void delete(CampaignEntity campaign) {
-
+        campaignRepository.delete(campaign);
     }
 
     @Override
@@ -51,6 +51,11 @@ public class CampaignRepositoryAdapter implements CampaignRepositoryPort {
     @Override
     public List<CampaignEntity> findByBrandIdAndId(String brandId, String campaignId, PageRequest pageRequest) {
         return campaignRepository.findByBrandIdAndId(brandId, campaignId, pageRequest);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        campaignRepository.deleteById(id);
     }
 
     private static Campaign getCampaign(CampaignEntity campaign) {

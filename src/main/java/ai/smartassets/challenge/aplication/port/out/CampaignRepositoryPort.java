@@ -20,4 +20,6 @@ public interface CampaignRepositoryPort {
     List<CampaignEntity> findByBrandId(String brandId, Pageable pageable);
 
     List<CampaignEntity> findByBrandIdAndId(String brandId, String campaignId, PageRequest pageRequest);
+
+    void deleteById(String id);
 }
