@@ -1,0 +1,30 @@
+[
+  {
+    "id": "1",
+    "name": "Creative 1 for Campaign A1",
+    "description": "Description for Creative 1 of Campaign A1.",
+    "creativeUrl": "http://example.com/creative1A1",
+    "campaign_id": "1"
+  },
+  {
+    "id": "2",
+    "name": "Creative 2 for Campaign A1",
+    "description": "Description for Creative 2 of Campaign A1.",
+    "creativeUrl": "http://example.com/creative2A1",
+    "campaign_id": "1"
+  },
+  {
+    "id": "3",
+    "name": "Creative 1 for Campaign B1",
+    "description": "Description for Creative 1 of Campaign B1.",
+    "creativeUrl": "http://example.com/creative1B1",
+    "campaign_id": "4"
+  },
+  {
+    "id": "4",
+    "name": "Creative 2 for Campaign B1",
+    "description": "Description for Creative 2 of Campaign B1.",
+    "creativeUrl": "http://example.com/creative2B1",
+    "campaign_id": "4"
+  }
+]

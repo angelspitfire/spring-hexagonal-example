@@ -24,7 +24,9 @@ spring:
 ---
 spring:
   profiles:
-    active: docker
+    config:
+      activate:
+        on-profile: docker
   main:
     allow-bean-definition-overriding: true
   data:
