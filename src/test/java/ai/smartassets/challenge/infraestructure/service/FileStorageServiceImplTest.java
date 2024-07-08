@@ -2,6 +2,7 @@ package ai.smartassets.challenge.infraestructure.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mock.web.MockMultipartFile;
@@ -17,11 +18,13 @@ class FileStorageServiceImplTest {
     @InjectMocks
     private FileStorageServiceImpl fileStorageService;
 
-    private final String storageLocation = "src/test/resources/temp";
+    @TempDir
+    Path tempDir;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        String storageLocation = tempDir.toString();
         fileStorageService = new FileStorageServiceImpl(storageLocation);
     }
 
