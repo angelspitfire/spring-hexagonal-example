@@ -1,7 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.port.out.CreativeRepositoryPort;
 import ai.smartassets.challenge.domain.Creative;
-import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 class ManageCreativeUseCaseImplTest {
 
     @Mock
-    private CreativeRepository creativeRepository;
+    private CreativeRepositoryPort creativeRepository;
 
     private ManageCreativeUseCaseImpl manageCreativeUseCase;
 

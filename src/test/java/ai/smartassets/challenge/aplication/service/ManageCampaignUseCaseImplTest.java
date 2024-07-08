@@ -1,9 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
-import ai.smartassets.challenge.aplication.port.out.BrandRepository;
-import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
-import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
+import ai.smartassets.challenge.aplication.port.out.*;
 import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
@@ -29,13 +27,13 @@ import static org.mockito.Mockito.*;
 class ManageCampaignUseCaseImplTest {
 
     @Mock
-    private CampaignRepository campaignRepository;
+    private CampaignRepositoryPort campaignRepository;
 
     @Mock
-    private BrandRepository brandRepository;
+    private BrandRepositoryPort brandRepository;
 
     @Mock
-    private CreativeRepository creativeRepository;
+    private CreativeRepositoryPort creativeRepository;
 
     private ManageCampaignUseCaseImpl manageCampaignUseCase;
 
@@ -154,11 +152,12 @@ class ManageCampaignUseCaseImplTest {
     @Test
     void findCampaignsByBrandId_ReturnsCorrectCampaigns() {
         String brandId = "brand123";
-        List<CampaignEntity> mockCampaignEntities = Arrays.asList(
+        List<CampaignEntity> campaignEntities = List.of(
                 new CampaignEntity("camp1", "Campaign 1", "Description 1", brandId),
                 new CampaignEntity("camp2", "Campaign 2", "Description 2", brandId)
         );
-        when(campaignRepository.findByBrandId(anyString(), any(Pageable.class))).thenReturn(mockCampaignEntities);
+
+        when(campaignRepository.findByBrandId(anyString(), any(Pageable.class))).thenReturn(campaignEntities);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
         List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);

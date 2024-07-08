@@ -1,0 +1,71 @@
+@startuml
+!theme materia
+
+class BrandController {
+    +createBrand(brand: Brand): ResponseEntity<Brand>
+    +listBrands(page: int, size: int): ResponseEntity<List<Brand>>
+    +getBrandById(brandId: String): ResponseEntity<Brand>
+    +updateBrand(brandId: String, brand: Brand): ResponseEntity<Brand>
+    +deleteBrand(brandId: String): ResponseEntity<?>
+    +createCampaignForBrand(brandId: String, campaign: Campaign): ResponseEntity<Campaign>
+    +listCampaignsForBrand(brandId: String, page: int, size: int): ResponseEntity<List<Campaign>>
+    +listCreativesForCampaign(brandId: String, campaignId: String, page: int, size: int): ResponseEntity<List<Creative>>
+    +uploadCreative(brandId: String, campaignId: String, file: MultipartFile, name: String, description: String): ResponseEntity<Creative>
+}
+
+interface ManageBrandUseCase {
+    +createBrand(brand: Brand): Brand
+    +listBrands(pageable: Pageable): List<Brand>
+    +getBrandById(brandId: String): Optional<Brand>
+    +updateBrand(brandId: String, brand: Brand): Optional<Brand>
+    +deleteBrand(brandId: String): boolean
+}
+
+interface ManageCampaignUseCase {
+    +createCampaignForBrand(brandId: String, campaign: Campaign): Campaign
+    +listCampaigns(PageRequest pageRequest): List<Campaign>
+    +getCampaignById(campaignId: String): Optional<Campaign>
+    +updateCampaign(campaignId: String, campaign: Campaign): Optional<Campaign>
+    +deleteCampaign(campaignId: String): boolean
+    +findCampaignsByBrandId(brandId: String, PageRequest pageRequest): List<Campaign>
+    +findCreativesByBrandIdAndCampaignId(brandId: String, campaignId: String, PageRequest pageRequest): List<Creative>
+}
+
+interface ManageCreativeUseCase {
+    +createCreative(creative: Creative): Creative
+    +listCreatives(pageRequest: PageRequest): List<Creative>
+    +getCreativeById(creativeId: String): Optional<Creative>
+    +updateCreative(creativeId: String, creative: Creative): Optional<Creative>
+    +deleteCreative(creativeId: String): boolean
+}
+
+class BrandRepository {
+    +findById(brandId: String): Optional<BrandEntity>
+    +findAll(pageable: Pageable): List<BrandEntity>
+    +save(brand: BrandEntity): BrandEntity
+    +deleteById(brandId: String): void
+}
+
+class CampaignRepository {
+    +findByBrandId(brandId: String, pageable: Pageable): List<CampaignEntity>
+    +findById(campaignId: String): Optional<CampaignEntity>
+    +save(campaign: CampaignEntity): CampaignEntity
+    +delete(campaign: CampaignEntity): void
+}
+
+class CreativeRepository {
+    +findByCampaignId(campaignId: String): List<CreativeEntity>
+    +findById(creativeId: String): Optional<CreativeEntity>
+    +save(creative: CreativeEntity): CreativeEntity
+    +delete(creative: CreativeEntity): void
+}
+
+BrandController --> ManageBrandUseCase : uses
+BrandController --> ManageCampaignUseCase : uses
+BrandController --> ManageCreativeUseCase : uses
+
+ManageBrandUseCase ..> BrandRepository : interacts
+ManageCampaignUseCase ..> CampaignRepository : interacts
+ManageCreativeUseCase ..> CreativeRepository : interacts
+
+@enduml

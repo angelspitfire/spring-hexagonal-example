@@ -1,7 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.port.in.ManageCreativeUseCase;
-import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
+import ai.smartassets.challenge.aplication.port.out.CreativeRepositoryPort;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,10 @@ import java.util.Optional;
 @Service
 public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
 
-    private final CreativeRepository creativeRepository;
+    private final CreativeRepositoryPort creativeRepository;
 
     @Autowired
-    public ManageCreativeUseCaseImpl(CreativeRepository creativeRepository) {
+    public ManageCreativeUseCaseImpl(CreativeRepositoryPort creativeRepository) {
         this.creativeRepository = creativeRepository;
     }
 

@@ -1,0 +1,57 @@
+@startuml
+!theme cerulean
+
+left to right direction
+actor "Client" as client
+
+package "Brand Management" <<Rectangle>> {
+    usecase "Create Brand" as UC1
+    usecase "List Brands" as UC2
+    usecase "Update Brand" as UC3
+    usecase "Delete Brand" as UC4
+    usecase "Get Brand By ID" as UC5
+}
+
+package "Campaign Management" <<Rectangle>> {
+    usecase "Create Campaign for Brand" as UC6
+    usecase "List Campaigns for Brand" as UC7
+    usecase "Update Campaign" as UC8
+    usecase "Delete Campaign" as UC9
+    usecase "Get Campaign By ID" as UC10
+    usecase "List Campaigns" as UC11
+    usecase "Find Campaigns By Brand ID" as UC12
+}
+
+package "Creative Management" <<Rectangle>> {
+    usecase "Create Creative" as UC13
+    usecase "List Creatives" as UC14
+    usecase "Update Creative" as UC15
+    usecase "Delete Creative" as UC16
+    usecase "Get Creative By ID" as UC17
+    usecase "List Creatives for Campaign" as UC18
+    usecase "Upload Creative" as UC19
+    usecase "Find Creatives By Brand ID and Campaign ID" as UC20
+}
+
+client --> UC1
+client --> UC2
+client --> UC3
+client --> UC4
+client --> UC5
+client --> UC6
+client --> UC7
+client --> UC8
+client --> UC9
+client --> UC10
+client --> UC11
+client --> UC12
+client --> UC13
+client --> UC14
+client --> UC15
+client --> UC16
+client --> UC17
+client --> UC18
+client --> UC19
+client --> UC20
+
+@enduml

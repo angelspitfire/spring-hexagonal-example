@@ -2,6 +2,7 @@ package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.out.BrandRepository;
+import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
 import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +15,10 @@ import java.util.Optional;
 @Service
 public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
 
-    private final BrandRepository brandRepository;
+    private final BrandRepositoryPort brandRepository;
 
     @Autowired
-    public ManageBrandUseCaseImpl(BrandRepository brandRepository) {
+    public ManageBrandUseCaseImpl(BrandRepositoryPort brandRepository) {
         this.brandRepository = brandRepository;
     }
 
