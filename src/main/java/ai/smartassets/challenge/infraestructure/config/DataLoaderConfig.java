@@ -31,7 +31,7 @@ public class DataLoaderConfig {
                 try {
                     log.info("Loading data for collection: {}", collection);
                     InputStream inputStream = new ClassPathResource("db/" + collection + ".json").getInputStream();
-                    List<Map<String, Object>> data = mapper.readValue(inputStream, new TypeReference<List<Map<String, Object>>>() {});
+                    List<Map<String, Object>> data = mapper.readValue(inputStream, new TypeReference<>() {});
                     mongoTemplate.getCollection(collection).insertMany(
                             data.stream()
                                     .map(mongoTemplate.getConverter()::convertToMongoType)
