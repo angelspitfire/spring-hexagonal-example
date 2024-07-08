@@ -59,10 +59,6 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
         return campaignRepository.findAll(pageRequest).map(ManageCampaignUseCaseImpl::getCampaign).toList();
     }
 
-    private static Campaign getCampaign(CampaignEntity campaignEntity) {
-        return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
-    }
-
     @Override
     public Optional<Campaign> getCampaignById(String id) {
         return campaignRepository.findById(id).map(ManageCampaignUseCaseImpl::getCampaign);
@@ -133,6 +129,10 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
         return creativeEntities.stream()
                 .map(ManageCampaignUseCaseImpl::getCreative)
                 .toList();
+    }
+
+    private static Campaign getCampaign(CampaignEntity campaignEntity) {
+        return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
     }
 
     private Function<CampaignEntity, Stream<? extends CreativeEntity>> getCampaignEntity() {

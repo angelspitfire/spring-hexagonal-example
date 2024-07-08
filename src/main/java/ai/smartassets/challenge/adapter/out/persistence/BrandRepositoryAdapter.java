@@ -46,6 +46,16 @@ public class BrandRepositoryAdapter implements BrandRepositoryPort {
 
     @Override
     public Optional<BrandEntity> findById(String id) {
-        return Optional.empty();
+        return brandRepository.findById(id);
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return brandRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        brandRepository.deleteById(id);
     }
 }

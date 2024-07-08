@@ -27,17 +27,9 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
         return getCreative(creativeRepository.save(entity));
     }
 
-    private static CreativeEntity getEntity(Creative creative) {
-        return new CreativeEntity(creative.getCreativeId(), creative.getName(), creative.getDescription(), creative.getCreativeUrl(), creative.getCampaignId());
-    }
-
     @Override
     public List<Creative> listCreatives(PageRequest pageRequest) {
         return creativeRepository.findAll(pageRequest).stream().map(ManageCreativeUseCaseImpl::getCreative).toList();
-    }
-
-    private static Creative getCreative(CreativeEntity creativeEntity) {
-        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
     }
 
     @Override
@@ -62,5 +54,13 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
                     creativeRepository.delete(creative);
                     return true;
                 }).orElse(false);
+    }
+
+    private static CreativeEntity getEntity(Creative creative) {
+        return new CreativeEntity(creative.getCreativeId(), creative.getName(), creative.getDescription(), creative.getCreativeUrl(), creative.getCampaignId());
+    }
+
+    private static Creative getCreative(CreativeEntity creativeEntity) {
+        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
     }
 }

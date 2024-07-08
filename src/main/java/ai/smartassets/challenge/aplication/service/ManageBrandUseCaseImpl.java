@@ -1,10 +1,10 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
-import ai.smartassets.challenge.aplication.port.out.BrandRepository;
 import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
 import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@Service @Slf4j
 public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
 
     private final BrandRepositoryPort brandRepository;
@@ -54,11 +54,14 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
 
     @Override
     public boolean deleteBrand(String id) {
-        // Implement delete logic here
-        return brandRepository.findById(id)
-                .map(brand -> {
-                    brandRepository.delete(brand);
-                    return true;
-                }).orElse(false);
+        log.info("Attempting to delete brand with id: {}", id);
+        return brandRepository.findById(id).map(brandEntity -> {
+            brandRepository.deleteById(id);
+            log.info("Brand with id {} deleted.", id);
+            return true;
+        }).orElseGet(() -> {
+            log.warn("Brand with id {} does not exist, cannot delete.", id);
+            return false;
+        });
     }
 }
