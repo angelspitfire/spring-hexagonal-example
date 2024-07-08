@@ -157,6 +157,8 @@ class ManageCampaignUseCaseImplTest {
                 new CampaignEntity("camp2", "Campaign 2", "Description 2", brandId)
         );
 
+        when(brandRepository.existsById("brand123")).thenReturn(true);
+
         when(campaignRepository.findByBrandId(anyString(), any(Pageable.class))).thenReturn(campaignEntities);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
