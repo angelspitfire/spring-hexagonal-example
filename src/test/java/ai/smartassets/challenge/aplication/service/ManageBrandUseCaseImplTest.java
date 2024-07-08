@@ -1,6 +1,6 @@
 package ai.smartassets.challenge.aplication.service;
 
-import ai.smartassets.challenge.aplication.port.out.BrandRepository;
+import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
 import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,12 +21,12 @@ import static org.mockito.Mockito.when;
 
 class ManageBrandUseCaseImplTest {
 
-    private BrandRepository brandRepositoryPort;
+    private BrandRepositoryPort brandRepositoryPort;
     private ManageBrandUseCaseImpl manageBrandUseCase;
 
     @BeforeEach
     void setUp() {
-        brandRepositoryPort = Mockito.mock(BrandRepository.class);
+        brandRepositoryPort = Mockito.mock(BrandRepositoryPort.class);
         manageBrandUseCase = new ManageBrandUseCaseImpl(brandRepositoryPort);
     }
 
@@ -38,7 +38,6 @@ class ManageBrandUseCaseImplTest {
         Brand brand = new Brand("1", "Test Brand", "Description");
         Brand createdBrand = manageBrandUseCase.createBrand(brand);
 
-        //assertEquals(brandEntity, createdBrand);
         assertThat(createdBrand.getBrandId()).isEqualTo(brandEntity.getId());
         assertThat(createdBrand.getName()).isEqualTo(brandEntity.getName());
         assertThat(createdBrand.getDescription()).isEqualTo(brandEntity.getDescription());

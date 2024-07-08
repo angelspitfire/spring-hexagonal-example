@@ -84,4 +84,19 @@ public class BrandController {
         List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
         return ResponseEntity.ok(creatives);
     }
+
+//    @PostMapping("/{brandId}/campaigns/{campaignId}/creatives/upload")
+//    public ResponseEntity<Creative> uploadCreative(@PathVariable String brandId,
+//                                                   @PathVariable String campaignId,
+//                                                   @RequestParam("file") MultipartFile file,
+//                                                   @RequestParam("name") String name,
+//                                                   @RequestParam("description") String description) {
+//        CreativeUploadDTO creativeUploadDTO = new CreativeUploadDTO();
+//        creativeUploadDTO.setName(name);
+//        creativeUploadDTO.setDescription(description);
+//        creativeUploadDTO.setFile(file);
+//
+//        Creative createdCreative = manageCampaignUseCase.uploadCreativeForCampaign(brandId, campaignId, creativeUploadDTO);
+//        return ResponseEntity.ok(createdCreative);
+//    }
 }

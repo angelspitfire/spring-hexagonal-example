@@ -1,0 +1,94 @@
+```plantuml
+@startuml
+!theme materia
+
+package "Controller Layer" {
+    class BrandController {
+        +createBrand(brand: Brand): ResponseEntity<Brand>
+        +listBrands(page: int, size: int): ResponseEntity<List<Brand>>
+        +getBrandById(brandId: String): ResponseEntity<Brand>
+        +updateBrand(brandId: String, brand: Brand): ResponseEntity<Brand>
+        +deleteBrand(brandId: String): ResponseEntity<?>
+        +createCampaignForBrand(brandId: String, campaign: Campaign): ResponseEntity<Campaign>
+        +listCampaignsForBrand(brandId: String, page: int, size: int): ResponseEntity<List<Campaign>>
+        +listCreativesForCampaign(brandId: String, campaignId: String, page: int, size: int): ResponseEntity<List<Creative>>
+        +uploadCreative(brandId: String, campaignId: String, file: MultipartFile, name: String, description: String): ResponseEntity<Creative>
+    }
+    class CampaignController {
+        +createCampaign(campaign: Campaign): ResponseEntity<Campaign>
+        +listCampaigns(page: int, size: int): ResponseEntity<List<Campaign>>
+        +getCampaignById(campaignId: String): ResponseEntity<Campaign>
+        +updateCampaign(campaignId: String, campaign: Campaign): ResponseEntity<Campaign>
+        +deleteCampaign(campaignId: String): ResponseEntity<?>
+    }
+    class CreativeController {
+        +createCreative(creative: Creative): ResponseEntity<Creative>
+        +listCreatives(page: int, size: int): ResponseEntity<List<Creative>>
+        +getCreativeById(creativeId: String): ResponseEntity<Creative>
+        +updateCreative(creativeId: String, creative: Creative): ResponseEntity<Creative>
+        +deleteCreative(creativeId: String): ResponseEntity<?>
+    }
+}
+
+package "Service Layer" {
+    interface ManageCampaignUseCase {
+        +createCampaign(String brandId, Campaign campaign)
+        +listCampaigns(PageRequest pageRequest)
+        +getCampaignById(String campaignId): Optional<Campaign>
+        +updateCampaign(String campaignId, Campaign campaign): Optional<Campaign>
+        +deleteCampaign(String campaignId): boolean
+        +createCampaignForBrand(String brandId, Campaign campaign)
+        +findCampaignsByBrandId(String brandId, PageRequest pageRequest)
+        +findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest)
+    }
+}
+
+package "Repository Layer" {
+    class BrandRepository 
+    class CampaignRepository 
+    class CreativeRepository 
+}
+
+package "Model Layer" {
+    class BrandEntity {
+        -id: String
+        -name: String
+        -description: String
+    }
+    class CampaignEntity {
+        -id: String
+        -name: String
+        -description: String
+        -brandId: String
+    }
+    class CreativeEntity {
+        -id: String
+        -name: String
+        -description: String
+        -creativeUrl: String
+        -campaignId: String
+    }
+}
+
+package "Domain Layer" {
+    class Brand 
+    class Campaign 
+    class Creative 
+}
+
+BrandController --> "Service Layer"
+CampaignController --> "Service Layer"
+CreativeController --> "Service Layer"
+
+"Service Layer" --> "Repository Layer"
+
+package "Infrastructure Layer" {
+    class MongoDBConfig {
+        +mongoTemplate(): MongoTemplate
+    }
+}
+
+MongoDBConfig ..> "Repository Layer"
+
+@enduml
+```

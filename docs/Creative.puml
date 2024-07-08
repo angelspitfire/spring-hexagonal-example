@@ -1,0 +1,32 @@
+@startuml
+!theme materia
+
+class CreativeController {
+    +createCreative(creative: Creative): ResponseEntity<Creative>
+    +listCreatives(page: int, size: int): ResponseEntity<List<Creative>>
+    +getCreativeById(creativeId: String): ResponseEntity<Creative>
+    +updateCreative(creativeId: String, creative: Creative): ResponseEntity<Creative>
+    +deleteCreative(creativeId: String): ResponseEntity<?>
+}
+
+interface ManageCreativeUseCase {
+    +createCreative(creative: Creative): Creative
+    +listCreatives(PageRequest pageRequest): List<Creative>
+    +getCreativeById(creativeId: String): Optional<Creative>
+    +updateCreative(creativeId: String, creative: Creative): Optional<Creative>
+    +deleteCreative(creativeId: String): boolean
+    +findCreativesByBrandIdAndCampaignId(brandId: String, campaignId: String, PageRequest pageRequest): List<Creative>
+}
+
+class CreativeRepository {
+    +findByCampaignId(campaignId: String): List<CreativeEntity>
+    +findById(creativeId: String): Optional<CreativeEntity>
+    +save(creative: CreativeEntity): CreativeEntity
+    +delete(creative: CreativeEntity): void
+}
+
+CreativeController --> ManageCreativeUseCase : uses
+
+ManageCreativeUseCase ..> CreativeRepository : interacts
+
+@enduml

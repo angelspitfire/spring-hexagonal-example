@@ -3,9 +3,7 @@ package ai.smartassets.challenge.aplication.service;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.exception.CampaignNotFoundException;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
-import ai.smartassets.challenge.aplication.port.out.BrandRepository;
-import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
-import ai.smartassets.challenge.aplication.port.out.CreativeRepository;
+import ai.smartassets.challenge.aplication.port.out.*;
 import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
@@ -23,12 +21,12 @@ import java.util.stream.Stream;
 @Service @Slf4j
 public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
 
-    private final CampaignRepository campaignRepository;
-    private final BrandRepository brandRepository;
-    private final CreativeRepository creativeRepository;
+    private final CampaignRepositoryPort campaignRepository;
+    private final BrandRepositoryPort brandRepository;
+    private final CreativeRepositoryPort creativeRepository;
 
     @Autowired
-    public ManageCampaignUseCaseImpl(CampaignRepository campaignRepository, BrandRepository brandRepository, CreativeRepository creativeRepository) {
+    public ManageCampaignUseCaseImpl(CampaignRepositoryPort campaignRepository, BrandRepositoryPort brandRepository, CreativeRepositoryPort creativeRepository) {
         this.campaignRepository = campaignRepository;
         this.brandRepository = brandRepository;
         this.creativeRepository = creativeRepository;

@@ -1,0 +1,36 @@
+@startuml
+!theme materia
+
+package "Spring Boot Application" {
+    [BrandService] ..> [BrandRepository] : uses
+    [BrandController] ..> [BrandService] : uses
+    [CampaignController] ..> [CampaignService] : uses
+    [CreativeController] ..> [CreativeService] : uses
+
+    database "MongoDB" {
+        [BrandDocument]
+        [CampaignDocument]
+        [CreativeDocument]
+    }
+
+    [BrandRepository] ..> [BrandDocument] : interacts
+    [CampaignRepository] ..> [CampaignDocument] : interacts
+    [CreativeRepository] ..> [CreativeDocument] : interacts
+}
+
+[BrandController] --> [BrandService] : HTTP requests
+[CampaignController] --> [CampaignService] : HTTP requests
+[CreativeController] --> [CreativeService] : HTTP requests
+
+[BrandService] --> [BrandRepository] : CRUD operations
+[CampaignService] --> [CampaignRepository] : CRUD operations
+[CreativeService] --> [CreativeRepository] : CRUD operations
+
+[BrandRepository] --> [MongoDB] : queries
+[CampaignRepository] --> [MongoDB] : queries
+[CreativeRepository] --> [MongoDB] : queries
+
+' Corrected by removing class definitions inside the component diagram
+' For Brand, Campaign, and Creative entities, consider creating a separate class diagram
+
+@enduml
