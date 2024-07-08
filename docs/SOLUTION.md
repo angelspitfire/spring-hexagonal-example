@@ -69,8 +69,7 @@ or using docker-compose:
     The application will be accessible at `http://localhost:8080`. You can use tools like Postman or cURL to interact with the RESTful APIs provided by the application.
     The Swagger UI is also available at `http://localhost:8080/swagger-ui.html`, providing a user-friendly interface for exploring and testing the APIs.
 
-6. **Consideratiions**:
-    - The application uses an embedded MongoDB for local use instance by default. If you prefer to use a standalone MongoDB instance, you can configure the connection details in the `application.yaml` file.
-    - The application runs a MongoDB instace whe running with docker-compose. You can run the following command to start the application with docker-compose. The reason behind this is to make it easier to run the application without the need to install MongoDB on your local machine due to a bug on apple silicon machines from de.flapdoodle,de.flapdoodle.embed.mongo.
-    - The application uses an in-memory database, which means that data will not persist between application restarts. For a production environment, you should configure a real MongoDB instance and provide the necessary connection details in the application configuration.
-    - The application is designed to be stateless, meaning that it does not store session data between requests. This design choice ensures scalability and fault tolerance, as each request is processed independently.
+## Considerations
+- **Embedded MongoDB for Local Use**: The application uses an embedded MongoDB instance by default for local development. To switch to a standalone MongoDB instance, update the connection details in the `application.yaml` file.
+
+- **MongoDB for docker-compose**: The application automatically runs a MongoDB instance when running with docker-compose. This setup is designed to bypass the need for local MongoDB installation, especially useful due to a bug on Apple Silicon machines related to de.flapdoodle.embed.mongo.

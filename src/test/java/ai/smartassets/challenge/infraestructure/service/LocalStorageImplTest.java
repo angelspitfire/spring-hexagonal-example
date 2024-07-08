@@ -29,7 +29,7 @@ class LocalStorageImplTest {
     }
 
     @Test
-    void storeFile_Success() throws Exception {
+    void storeFile_Success() {
         MultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
         String storedFilePath = fileStorageService.storeFile(multipartFile);
         assertTrue(Files.exists(Path.of(storedFilePath)));
