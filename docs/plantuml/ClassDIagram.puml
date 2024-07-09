@@ -52,4 +52,56 @@ package "Service Layer" {
     }
 }
 
+package "Repository Layer" {
+    class BrandRepository {
+        +save(brand: Brand): Brand
+        +findAll(pageable: Pageable): List<Brand>
+        +findById(brandId: String): Optional<Brand>
+        +deleteById(brandId: String): void
+    }
+    class CampaignRepository {
+        +save(campaign: Campaign): Campaign
+        +findByBrandId(brandId: String, pageable: Pageable): List<Campaign>
+        +findById(campaignId: String): Optional<Campaign>
+        +deleteById(campaignId: String): void
+    }
+    class CreativeRepository {
+        +save(creative: Creative): Creative
+        +findAll(pageable: Pageable): List<Creative>
+        +findById(creativeId: String): Optional<Creative>
+        +deleteById(creativeId: String): void
+    }
+}
+
+package "Model Layer" {
+    class Brand {
+        -id: String
+        -name: String
+        -description: String
+    }
+    class Campaign {
+        -id: String
+        -name: String
+        -description: String
+    }
+    class Creative {
+        -id: String
+        -name: String
+        -description: String
+        -fileUrl: String
+    }
+}
+
+BrandController --> ManageBrandUseCaseImpl
+CampaignController --> ManageCampaignUseCaseImpl
+CreativeController --> ManageCreativeUseCaseImpl
+
+ManageBrandUseCaseImpl --> BrandRepository
+ManageCampaignUseCaseImpl --> CampaignRepository
+ManageCreativeUseCaseImpl --> CreativeRepository
+
+BrandRepository --> Brand
+CampaignRepository --> Campaign
+CreativeRepository --> Creative
+
 @enduml

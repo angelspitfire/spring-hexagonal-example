@@ -80,7 +80,7 @@ The system's architecture is designed following the Hexagonal Architecture appro
 By adhering to the Hexagonal Architecture, we ensure that the application's core logic is independent of external interfaces and frameworks, making the system more resilient to changes in technology or business requirements.
 
 **Key Components**
-![Components diagram](docs/img//Components-0.png "Components diagram")
+![Components diagram](docs/img/ClassDIagram-0.png "Components diagram")
 
 **Classes**
 ![Architecture Overview](docs/img//ArchitectureOverview-0.png "Architecture Overview")
