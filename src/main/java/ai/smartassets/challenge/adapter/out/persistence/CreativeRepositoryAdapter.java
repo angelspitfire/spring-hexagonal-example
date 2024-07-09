@@ -46,4 +46,9 @@ public class CreativeRepositoryAdapter implements CreativeRepositoryPort {
     public List<CreativeEntity> findByCampaignId(String campaignId, PageRequest pageRequest) {
         return creativeRepository.findByCampaignId(campaignId);
     }
+
+    @Override
+    public boolean existsById(String creativeId) {
+       return creativeRepository.existsById(creativeId);
+    }
 }

@@ -58,11 +58,8 @@ public class CampaignRepositoryAdapter implements CampaignRepositoryPort {
         campaignRepository.deleteById(id);
     }
 
-    private static Campaign getCampaign(CampaignEntity campaign) {
-        return new Campaign(campaign.getId(), campaign.getName(), campaign.getDescription());
-    }
-
-    private static CampaignEntity getEntity(Campaign campaign) {
-        return new CampaignEntity(campaign.getCampaignId(), campaign.getName(), campaign.getDescription(), null);
+    @Override
+    public boolean existsById(String campaignId) {
+        return campaignRepository.existsById(campaignId);
     }
 }

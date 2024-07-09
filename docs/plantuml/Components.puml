@@ -1,8 +1,5 @@
 @startuml
-!theme materia
-
-@startuml
-!theme materia
+!theme plain
 
 package "Spring Boot Application" {
     interface "Controller Port" as CP {

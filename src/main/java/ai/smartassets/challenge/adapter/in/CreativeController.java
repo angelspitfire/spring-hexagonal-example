@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.adapter.in;
 
+import ai.smartassets.challenge.aplication.dto.CreativeDTO;
+import ai.smartassets.challenge.aplication.dto.CreativeUpdateDTO;
 import ai.smartassets.challenge.aplication.port.in.ManageCreativeUseCase;
 import ai.smartassets.challenge.domain.Creative;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +21,6 @@ public class CreativeController {
         this.manageCreativeUseCase = manageCreativeUseCase;
     }
 
-    @PostMapping
-    public ResponseEntity<Creative> createCreative(@RequestBody Creative creative) {
-        Creative createdCreative = manageCreativeUseCase.createCreative(creative);
-        return ResponseEntity.ok(createdCreative);
-    }
-
     @GetMapping
     public ResponseEntity<List<Creative>> listCreatives(@RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -40,7 +36,7 @@ public class CreativeController {
     }
 
     @PatchMapping("/{creativeId}")
-    public ResponseEntity<Creative> updateCreative(@PathVariable String creativeId, @RequestBody Creative creative) {
+    public ResponseEntity<Creative> updateCreative(@PathVariable String creativeId, @RequestBody CreativeUpdateDTO creative) {
         return manageCreativeUseCase.updateCreative(creativeId, creative)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

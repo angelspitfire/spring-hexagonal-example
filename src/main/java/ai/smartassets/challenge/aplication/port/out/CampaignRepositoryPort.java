@@ -22,4 +22,6 @@ public interface CampaignRepositoryPort {
     List<CampaignEntity> findByBrandIdAndId(String brandId, String campaignId, PageRequest pageRequest);
 
     void deleteById(String id);
+
+    boolean existsById(String campaignId);
 }

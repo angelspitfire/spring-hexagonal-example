@@ -50,12 +50,4 @@ public class BrandRepositoryAdapter implements BrandRepositoryPort {
     public void deleteById(String id) {
         brandRepository.deleteById(id);
     }
-
-    private static BrandEntity getEntity(Brand brand) {
-        return new BrandEntity(brand.getBrandId(), brand.getName(), brand.getDescription());
-    }
-
-    private static Brand getBrand(BrandEntity brandEntity) {
-        return new Brand(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
-    }
 }
