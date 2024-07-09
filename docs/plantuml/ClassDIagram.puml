@@ -50,5 +50,6 @@ package "Service Layer" {
         +updateCreative(creativeId: String, creative: Creative): Optional<Creative>
         +deleteCreative(creativeId: String): boolean
     }
-
 }
+
+@enduml

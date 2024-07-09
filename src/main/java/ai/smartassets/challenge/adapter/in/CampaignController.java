@@ -1,5 +1,6 @@
 package ai.smartassets.challenge.adapter.in;
 
+import ai.smartassets.challenge.aplication.dto.CampaignUpdateDto;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.domain.Campaign;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class CampaignController {
     }
 
     @PatchMapping("/{campaignId}")
-    public ResponseEntity<Campaign> updateCampaign(@PathVariable String campaignId, @RequestBody Campaign campaign) {
+    public ResponseEntity<Campaign> updateCampaign(@PathVariable String campaignId, @RequestBody CampaignUpdateDto campaign) {
         return manageCampaignUseCase.updateCampaign(campaignId, campaign)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

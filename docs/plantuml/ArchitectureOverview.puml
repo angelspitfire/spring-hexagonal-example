@@ -1,5 +1,5 @@
 @startuml
-!theme materia
+!theme plain
 
 package "Controller Layer" {
     class BrandController {
@@ -39,6 +39,12 @@ package "Service Layer" {
         +createCampaignForBrand(String brandId, Campaign campaign)
         +findCampaignsByBrandId(String brandId, PageRequest pageRequest)
         +findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest)
+    }
+    interface ManageCreativeUseCase {
+        +listCreatives(PageRequest pageRequest): List<Creative>
+        +getCreativeById(String creativeId): Optional<Creative>
+        +updateCreative(String creativeId, Creative creative): Optional<Creative>
+        +deleteCreative(String creativeId): boolean
     }
 }
 
@@ -85,12 +91,40 @@ package "Infrastructure Layer" {
     class MongoDBConfig {
         +mongoTemplate(): MongoTemplate
     }
-    class DataLoaderConfig {
-        +loadData(): CommandLineRunner
+    class BrandRepositoryImpl {
+        +save(BrandEntity brand): BrandEntity
+        +findById(String id): Optional<BrandEntity>
+        +findAll(PageRequest pageRequest): List<BrandEntity>
+        +deleteById(String id): void
     }
+    class CampaignRepositoryImpl {
+        +save(CampaignEntity campaign): CampaignEntity
+        +findById(String id): Optional<CampaignEntity>
+        +findAll(PageRequest pageRequest): List<CampaignEntity>
+        +deleteById(String id): void
+    }
+    class CreativeRepositoryImpl {
+        +save(CreativeEntity creative): Creative
+        +findById(String id): Optional<CreativeEntity>
+        +findAll(PageRequest pageRequest): List<CreativeEntity>
+        +deleteById(String id): void
+        +findByCampaignId(String campaignId, PageRequest pageRequest): List<CreativeEntity>
+        +findByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest): List<CreativeEntity>
+    }
+
+    BrandRepositoryImpl --> MongoDBConfig
+    CampaignRepositoryImpl --> MongoDBConfig
+    CreativeRepositoryImpl --> MongoDBConfig
 }
 
-MongoDBConfig ..> "Repository Layer"
-DataLoaderConfig ..> "Infrastructure Layer"
+"Repository Layer" --> "Infrastructure Layer"
+
+package "Configuration" {
+    class WebSecurity
+    class WebMvcConfig
+    class SwaggerConfig
+}
+
+"Infrastructure Layer" --> "Configuration"
 
 @enduml

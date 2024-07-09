@@ -19,4 +19,6 @@ public interface CreativeRepositoryPort {
     void delete(CreativeEntity creative);
 
     List<CreativeEntity> findByCampaignId(String campaignId, PageRequest pageRequest);
+
+    boolean existsById(String creativeId);
 }

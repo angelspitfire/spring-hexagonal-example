@@ -31,7 +31,7 @@ class CampaignRepositoryAdapterTest {
     }
 
     @Test
-    void testSaveCampaign() {
+    void givenCampaignEntity_whenSaveCampaign_thenCampaignIsSavedSuccessfully() {
         CampaignEntity campaign = new CampaignEntity("1", "Campaign Name", "Campaign Description", "brandId");
         when(campaignRepository.save(any(CampaignEntity.class))).thenReturn(campaign);
 
@@ -42,7 +42,7 @@ class CampaignRepositoryAdapterTest {
     }
 
     @Test
-    void testFindById() {
+    void givenCampaignId_whenFindById_thenCampaignIsFoundSuccessfully() {
         Optional<CampaignEntity> campaign = Optional.of(new CampaignEntity("1", "Campaign Name", "Campaign Description", "brandId"));
         when(campaignRepository.findById("1")).thenReturn(campaign);
 
@@ -53,7 +53,7 @@ class CampaignRepositoryAdapterTest {
     }
 
     @Test
-    void testFindByIdNotFound() {
+    void givenNonExistingCampaignId_whenFindById_thenNoCampaignIsFound() {
         when(campaignRepository.findById("2")).thenReturn(Optional.empty());
 
         Optional<CampaignEntity> foundCampaign = campaignRepositoryAdapter.findById("2");
@@ -62,14 +62,14 @@ class CampaignRepositoryAdapterTest {
     }
 
     @Test
-    void testDeleteCampaign() {
+    void givenCampaignId_whenDeleteCampaign_thenCampaignIsDeletedSuccessfully() {
         doNothing().when(campaignRepository).deleteById("1");
 
         assertDoesNotThrow(() -> campaignRepositoryAdapter.deleteById("1"));
     }
 
     @Test
-    void testFindAll() {
+    void givenPageableRequest_whenFindAll_thenCampaignsAreReturnedSuccessfully() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         CampaignEntity campaign = new CampaignEntity("1", "Campaign Name", "Campaign Description", "brandId");
         when(campaignRepository.findAll(pageRequest)).thenReturn(new PageImpl<>(Collections.singletonList(campaign)));

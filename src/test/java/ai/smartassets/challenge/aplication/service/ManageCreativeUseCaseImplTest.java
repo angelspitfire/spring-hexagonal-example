@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.CreativeDTO;
+import ai.smartassets.challenge.aplication.dto.CreativeUpdateDTO;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepositoryPort;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
@@ -33,23 +35,23 @@ class ManageCreativeUseCaseImplTest {
     }
 
     @Test
-    void createCreative() {
+    void givenCreativeObject_whenCreateCreative_thenCreativeIsCreatedSuccessfully() {
         CreativeEntity creativeEntity = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1");
-        Creative creative = new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
+        CreativeDTO creativeDTO = new CreativeDTO(creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
 
         when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(creativeEntity);
 
-        Creative result = manageCreativeUseCase.createCreative(creative);
+        Creative result = manageCreativeUseCase.createCreative(creativeDTO);
 
-        verify(creativeRepository).save(creativeEntity);
+        verify(creativeRepository).save(any(CreativeEntity.class));
         assertThat(result.getCreativeId()).isEqualTo(creativeEntity.getId());
-        assertThat(result.getName()).isEqualTo(creativeEntity.getName());
-        assertThat(result.getDescription()).isEqualTo(creativeEntity.getDescription());
-        assertThat(result.getCreativeUrl()).isEqualTo(creativeEntity.getCreativeUrl());
+        assertThat(result.getName()).isEqualTo(creativeDTO.getName());
+        assertThat(result.getDescription()).isEqualTo(creativeDTO.getDescription());
+        assertThat(result.getCreativeUrl()).isEqualTo(creativeDTO.getCreativeUrl());
     }
 
     @Test
-    void listCreatives() {
+    void givenPageableRequest_whenListCreatives_thenCreativesAreReturnedSuccessfully() {
         PageRequest pageRequest = PageRequest.of(0, 10);
         CreativeEntity creative = new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1");
         List<CreativeEntity> creativeList = List.of(creative);
@@ -69,7 +71,7 @@ class ManageCreativeUseCaseImplTest {
     }
 
     @Test
-    void getCreativeById() {
+    void givenCreativeId_whenGetCreativeById_thenCreativeIsFoundSuccessfully() {
         String id = "testId";
         Optional<CreativeEntity> creativeEntity = Optional.of(new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1"));
         when(creativeRepository.findById(id)).thenReturn(creativeEntity);
@@ -85,7 +87,7 @@ class ManageCreativeUseCaseImplTest {
     }
 
     @Test
-    void updateCreative() {
+    void givenCreativeIdAndUpdatedInfo_whenUpdateCreative_thenCreativeIsUpdatedSuccessfully() {
         String id = "testId";
         CreativeEntity existingCreativeEntity = new CreativeEntity();
         CreativeEntity updatedCreativeEntity = new CreativeEntity();
@@ -93,7 +95,7 @@ class ManageCreativeUseCaseImplTest {
         when(creativeRepository.findById(id)).thenReturn(Optional.of(existingCreativeEntity));
         when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(updatedCreativeEntity);
 
-        Creative updatedCreative = new Creative(updatedCreativeEntity.getId(), updatedCreativeEntity.getName(), updatedCreativeEntity.getDescription(), updatedCreativeEntity.getCreativeUrl(), updatedCreativeEntity.getCampaignId());
+        CreativeUpdateDTO updatedCreative = new CreativeUpdateDTO(updatedCreativeEntity.getName(), updatedCreativeEntity.getDescription(), updatedCreativeEntity.getCreativeUrl(), updatedCreativeEntity.getCampaignId());
         Optional<Creative> result = manageCreativeUseCase.updateCreative(id, updatedCreative);
 
         verify(creativeRepository).findById(id);
@@ -103,7 +105,7 @@ class ManageCreativeUseCaseImplTest {
     }
 
     @Test
-    void deleteCreative() {
+    void givenCreativeId_whenDeleteCreative_thenCreativeIsDeletedSuccessfully() {
         String id = "testId";
         CreativeEntity creative = new CreativeEntity();
         when(creativeRepository.findById(id)).thenReturn(Optional.of(creative));

@@ -1,11 +1,16 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.BrandCreationDto;
+import ai.smartassets.challenge.aplication.dto.BrandUpdateDto;
+import ai.smartassets.challenge.aplication.exception.BrandCreationException;
+import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
 import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -17,7 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class ManageBrandUseCaseImplTest {
 
@@ -31,11 +36,11 @@ class ManageBrandUseCaseImplTest {
     }
 
     @Test
-    void createBrand() {
+    void givenBrandDto_whenCreateBrand_thenBrandIsCreatedSuccessfully() {
         BrandEntity brandEntity = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.save(any(BrandEntity.class))).thenReturn(brandEntity);
 
-        Brand brand = new Brand("1", "Test Brand", "Description");
+        BrandCreationDto brand = new BrandCreationDto("Test Brand", "Description");
         Brand createdBrand = manageBrandUseCase.createBrand(brand);
 
         assertThat(createdBrand.getBrandId()).isEqualTo(brandEntity.getId());
@@ -44,7 +49,7 @@ class ManageBrandUseCaseImplTest {
     }
 
     @Test
-    void listBrands() {
+    void givenPageable_whenListBrands_thenBrandsAreReturned() {
         PageRequest pageable = PageRequest.of(0, 10);
         BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
         Page<BrandEntity> brandPage = new PageImpl<>(Collections.singletonList(brand));
@@ -59,7 +64,7 @@ class ManageBrandUseCaseImplTest {
     }
 
     @Test
-    void getBrandById() {
+    void givenBrandId_whenGetBrandById_thenBrandIsFound() {
         BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(brand));
 
@@ -72,13 +77,13 @@ class ManageBrandUseCaseImplTest {
     }
 
     @Test
-    void updateBrand() {
+    void givenBrandIdAndUpdatedInfo_whenUpdateBrand_thenBrandIsUpdatedSuccessfully() {
         BrandEntity existingEntityBrand = new BrandEntity("1", "Test Brand", "Description");
         BrandEntity updatedEntityBrand = new BrandEntity("1", "Updated Brand", "Updated Description");
         when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(existingEntityBrand));
         when(brandRepositoryPort.save(any(BrandEntity.class))).thenReturn(updatedEntityBrand);
 
-        Brand updatedBrand = new Brand(updatedEntityBrand.getId(), updatedEntityBrand.getName(), updatedEntityBrand.getDescription());
+        BrandUpdateDto updatedBrand = new BrandUpdateDto("Updated Brand", "Updated Description");
         Optional<Brand> result = manageBrandUseCase.updateBrand("1", updatedBrand);
 
         assertTrue(result.isPresent());
@@ -87,15 +92,65 @@ class ManageBrandUseCaseImplTest {
     }
 
     @Test
-    void deleteBrand() {
+    void givenBrandId_whenDeleteBrand_thenBrandIsDeletedSuccessfully() {
         BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
-        when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(brand));
+        when(brandRepositoryPort.existsById("1")).thenReturn(true);
         Mockito.doNothing().when(brandRepositoryPort).deleteById("1");
 
         boolean result = manageBrandUseCase.deleteBrand("1");
 
         assertTrue(result);
-        Mockito.verify(brandRepositoryPort, Mockito.times(1)).findById("1");
-        Mockito.verify(brandRepositoryPort, Mockito.times(1)).deleteById("1");
+        verify(brandRepositoryPort, times(1)).existsById("1");
+        verify(brandRepositoryPort, times(1)).deleteById("1");
+    }
+
+    @Test
+    void givenDataAccessException_whenCreateBrand_thenBrandCreationExceptionIsThrown() {
+        BrandCreationDto brandCreationDto = new BrandCreationDto( "Test Brand", "Description");
+        when(brandRepositoryPort.save(any(BrandEntity.class))).thenThrow(new DataAccessException("Test Exception") {
+        });
+
+        assertThrows(BrandCreationException.class, () -> manageBrandUseCase.createBrand(brandCreationDto));
+    }
+
+    @Test
+    void givenNoBrands_whenListBrands_thenEmptyListIsReturned() {
+        PageRequest pageable = PageRequest.of(0, 10);
+        Page<BrandEntity> brandPage = new PageImpl<>(Collections.emptyList());
+        when(brandRepositoryPort.findAll(any(PageRequest.class))).thenReturn(brandPage);
+
+        List<Brand> result = manageBrandUseCase.listBrands(pageable);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void givenNonExistingBrandId_whenGetBrandById_thenOptionalEmptyIsReturned() {
+        when(brandRepositoryPort.findById("non-existing")).thenReturn(Optional.empty());
+
+        Optional<Brand> result = manageBrandUseCase.getBrandById("non-existing");
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void givenNonExistingBrand_whenUpdateBrand_thenOptionalEmptyIsReturned() {
+        BrandUpdateDto updatedBrand = new BrandUpdateDto("Updated Brand", "Updated Description");
+        when(brandRepositoryPort.findById("non-existing")).thenReturn(Optional.empty());
+
+        Optional<Brand> result = manageBrandUseCase.updateBrand("non-existing", updatedBrand);
+
+        assertFalse(result.isPresent());
+    }
+
+    @Test
+    void givenNonExistingBrandId_whenDeleteBrand_thenBrandNotFoundExceptionIsThrown() {
+        String nonExistingBrandId = "non-existing";
+        when(brandRepositoryPort.existsById(nonExistingBrandId)).thenReturn(false);
+
+        assertThrows(BrandNotFoundException.class, () -> manageBrandUseCase.deleteBrand(nonExistingBrandId));
+
+        verify(brandRepositoryPort, times(1)).existsById(nonExistingBrandId);
+        verify(brandRepositoryPort, never()).deleteById(nonExistingBrandId);
     }
 }

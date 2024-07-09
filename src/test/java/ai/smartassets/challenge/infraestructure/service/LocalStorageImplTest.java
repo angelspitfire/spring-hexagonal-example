@@ -29,14 +29,14 @@ class LocalStorageImplTest {
     }
 
     @Test
-    void storeFile_Success() {
+    void givenValidMultipartFile_whenStoreFile_thenFileIsStoredSuccessfully() {
         MultipartFile multipartFile = new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
         String storedFilePath = fileStorageService.storeFile(multipartFile);
         assertTrue(Files.exists(Path.of(storedFilePath)));
     }
 
     @Test
-    void storeFile_NullFile_ThrowsException() {
+    void givenNullFile_whenStoreFile_thenExceptionIsThrown() {
         Exception exception = assertThrows(RuntimeException.class, () -> fileStorageService.storeFile(null));
         assertEquals("Cannot store null file", exception.getMessage());
     }
