@@ -1,6 +1,8 @@
 package ai.smartassets.challenge.aplication.service;
 
-import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
+import ai.smartassets.challenge.aplication.dto.CampaignUpdateRequest;
+import ai.smartassets.challenge.aplication.dto.CreativeUploadRequest;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.exception.CampaignNotFoundException;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
@@ -36,7 +38,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Campaign createCampaign(String brandId, Campaign campaign) {
+    public CampaignResponse createCampaign(String brandId, Campaign campaign) {
 
         if (brandId == null || brandId.trim().isEmpty()) {
             throw new IllegalArgumentException("Brand ID cannot be null or empty");
@@ -58,20 +60,20 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public List<Campaign> listCampaigns(PageRequest pageRequest) {
+    public List<CampaignResponse> listCampaigns(PageRequest pageRequest) {
         return campaignRepository.findAll(pageRequest).map(ManageCampaignUseCaseImpl::getCampaign).toList();
     }
 
     @Override
-    public Optional<Campaign> getCampaignById(String id) {
+    public Optional<CampaignResponse> getCampaignById(String id) {
         return campaignRepository.findById(id).map(ManageCampaignUseCaseImpl::getCampaign);
     }
 
     @Override
-    public Optional<Campaign> updateCampaign(String campaignId, Campaign campaign) {
+    public Optional<CampaignResponse> updateCampaign(String campaignId, CampaignUpdateRequest campaign) {
         return campaignRepository.findById(campaignId).map(campaignEntity -> {
-            campaignEntity.setName(campaign.getName());
-            campaignEntity.setDescription(campaign.getDescription());
+            campaignEntity.setName(campaign.name());
+            campaignEntity.setDescription(campaign.description());
             return getCampaign(campaignRepository.save(campaignEntity));
         });
     }
@@ -86,7 +88,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Campaign createCampaignForBrand(String brandId, Campaign campaign) {
+    public CampaignResponse createCampaignForBrand(String brandId, Campaign campaign) {
         return brandRepository.findById(brandId)
                 .map(brand -> {
                     CampaignEntity campaignEntity = getCampaignEntity(brandId, campaign);
@@ -97,12 +99,12 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public List<Campaign> findCampaignsByBrandId(String brandId, PageRequest pageRequest) {
+    public List<CampaignResponse> findCampaignsByBrandId(String brandId, PageRequest pageRequest) {
         validateBrandIdForExistence(brandId);
 
         log.info("Starting to find campaigns for brandId: {}", brandId);
 
-        List<Campaign> campaigns = campaignRepository.findByBrandId(brandId, pageRequest)
+        List<CampaignResponse> campaigns = campaignRepository.findByBrandId(brandId, pageRequest)
                 .stream()
                 .map(ManageCampaignUseCaseImpl::getCampaign)
                 .toList();
@@ -142,7 +144,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Creative uploadCreativeForCampaign(String brandId, String campaignId, CreativeUploadDTO creativeUploadDTO) {
+    public Creative uploadCreativeForCampaign(String brandId, String campaignId, CreativeUploadRequest creativeUploadRequest) {
 
         brandRepository.findById(brandId)
                 .orElseThrow(() -> new BrandNotFoundException("Brand with id " + brandId + " not found"));
@@ -150,11 +152,11 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
         campaignRepository.findById(campaignId)
                 .orElseThrow(() -> new CampaignNotFoundException("Campaign with id " + campaignId + " not found"));
 
-        String fileLocation = fileStorageService.storeFile(creativeUploadDTO.getFile());
+        String fileLocation = fileStorageService.storeFile(creativeUploadRequest.file());
 
         CreativeEntity creative = new CreativeEntity();
-        creative.setName(creativeUploadDTO.getName());
-        creative.setDescription(creativeUploadDTO.getDescription());
+        creative.setName(creativeUploadRequest.name());
+        creative.setDescription(creativeUploadRequest.description());
         creative.setCreativeUrl(fileLocation);
         creative.setCampaignId(campaignId);
 
@@ -191,8 +193,8 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
         }
     }
 
-    private static Campaign getCampaign(CampaignEntity campaignEntity) {
-        return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
+    private static CampaignResponse getCampaign(CampaignEntity campaignEntity) {
+        return new CampaignResponse(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
     }
 
     private static Creative getCreative(CreativeEntity e) {

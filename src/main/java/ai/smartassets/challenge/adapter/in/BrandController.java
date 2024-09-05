@@ -1,6 +1,9 @@
 package ai.smartassets.challenge.adapter.in;
 
-import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
+import ai.smartassets.challenge.aplication.dto.BrandCreationRequest;
+import ai.smartassets.challenge.aplication.dto.BrandResponse;
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
+import ai.smartassets.challenge.aplication.dto.CreativeUploadRequest;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.domain.Brand;
@@ -27,27 +30,27 @@ public class BrandController {
     }
 
     @PostMapping
-    public ResponseEntity<Brand> createBrand(@RequestBody Brand brand) {
-        Brand createdBrand = manageBrandUseCase.createBrand(brand);
+    public ResponseEntity<BrandResponse> createBrand(@RequestBody BrandCreationRequest brand) {
+        BrandResponse createdBrand = manageBrandUseCase.createBrand(brand);
         return ResponseEntity.ok(createdBrand);
     }
 
     @GetMapping
-    public ResponseEntity<List<Brand>> listBrands(@RequestParam(value = "page", defaultValue = "0") int page,
+    public ResponseEntity<List<BrandResponse>> listBrands(@RequestParam(value = "page", defaultValue = "0") int page,
                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Brand> brands = manageBrandUseCase.listBrands(PageRequest.of(page, size));
+        List<BrandResponse> brands = manageBrandUseCase.listBrands(PageRequest.of(page, size));
         return ResponseEntity.ok(brands);
     }
 
     @GetMapping("/{brandId}")
-    public ResponseEntity<Brand> getBrandById(@PathVariable String brandId) {
+    public ResponseEntity<BrandResponse> getBrandById(@PathVariable String brandId) {
         return manageBrandUseCase.getBrandById(brandId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{brandId}")
-    public ResponseEntity<Brand> updateBrand(@PathVariable String brandId, @RequestBody Brand brand) {
+    public ResponseEntity<BrandResponse> updateBrand(@PathVariable String brandId, @RequestBody Brand brand) {
         return manageBrandUseCase.updateBrand(brandId, brand)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -63,17 +66,17 @@ public class BrandController {
     }
 
     @PostMapping("/{brandId}/campaigns")
-    public ResponseEntity<Campaign> createCampaignForBrand(@PathVariable String brandId, @RequestBody Campaign campaign) {
-        Campaign createdCampaign = manageCampaignUseCase.createCampaignForBrand(brandId, campaign);
+    public ResponseEntity<CampaignResponse> createCampaignForBrand(@PathVariable String brandId, @RequestBody Campaign campaign) {
+        CampaignResponse createdCampaign = manageCampaignUseCase.createCampaignForBrand(brandId, campaign);
         return ResponseEntity.ok(createdCampaign);
     }
 
     @GetMapping("/{brandId}/campaigns")
-    public ResponseEntity<List<Campaign>> listCampaignsForBrand(@PathVariable String brandId,
+    public ResponseEntity<List<CampaignResponse>> listCampaignsForBrand(@PathVariable String brandId,
                                                                 @RequestParam(value = "page", defaultValue = "0") int page,
                                                                 @RequestParam(value = "size", defaultValue = "10") int size) {
         PageRequest pageRequest = PageRequest.of(page, size);
-        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
+        List<CampaignResponse> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
         return ResponseEntity.ok(campaigns);
     }
 
@@ -91,9 +94,10 @@ public class BrandController {
                                                    @RequestParam("name") String name,
                                                    @RequestParam("description") String description) {
 
-        CreativeUploadDTO creativeUploadDTO = new CreativeUploadDTO(name, description, file);
 
-        Creative createdCreative = manageCampaignUseCase.uploadCreativeForCampaign(brandId, campaignId, creativeUploadDTO);
+        CreativeUploadRequest creativeUploadRequest = new CreativeUploadRequest(name, description, file);
+
+        Creative createdCreative = manageCampaignUseCase.uploadCreativeForCampaign(brandId, campaignId, creativeUploadRequest);
         return ResponseEntity.ok(createdCreative);
     }
 }

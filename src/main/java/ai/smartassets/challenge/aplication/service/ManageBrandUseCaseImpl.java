@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.BrandResponse;
+import ai.smartassets.challenge.aplication.dto.BrandCreationRequest;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
 import ai.smartassets.challenge.domain.Brand;
@@ -23,32 +25,32 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
     }
 
     @Override
-    public Brand createBrand(Brand brand) {
-        BrandEntity brandEntity = new BrandEntity(brand.getBrandId(), brand.getName(), brand.getDescription());
+    public BrandResponse createBrand(BrandCreationRequest brand) {
+        BrandEntity brandEntity = new BrandEntity(null, brand.name(), brand.description());
         BrandEntity entity = brandRepository.save(brandEntity);
-        return new Brand(entity.getId(), entity.getName(), entity.getDescription());
+        return new BrandResponse(entity.getId(), entity.getName(), entity.getDescription());
     }
 
     @Override
-    public List<Brand> listBrands(Pageable pageable) {
+    public List<BrandResponse> listBrands(Pageable pageable) {
         return brandRepository.findAll(pageable)
-                .stream().map(brand -> new Brand(brand.getId(), brand.getName(), brand.getDescription()))
+                .stream().map(brand -> new BrandResponse(brand.getId(), brand.getName(), brand.getDescription()))
                 .toList();
     }
 
     @Override
-    public Optional<Brand> getBrandById(String id) {
+    public Optional<BrandResponse> getBrandById(String id) {
         return brandRepository.findById(id)
-                .map(brand -> new Brand(brand.getId(), brand.getName(), brand.getDescription()));
+                .map(brand -> new BrandResponse(brand.getId(), brand.getName(), brand.getDescription()));
     }
 
     @Override
-    public Optional<Brand> updateBrand(String id, Brand brand) {
+    public Optional<BrandResponse> updateBrand(String id, Brand brand) {
         return brandRepository.findById(id).map(brandEntity -> {
             brandEntity.setName(brand.getName());
             brandEntity.setDescription(brand.getDescription());
             BrandEntity entity = brandRepository.save(brandEntity);
-            return Optional.of(new Brand(entity.getId(), entity.getName(), entity.getDescription()));
+            return Optional.of(new BrandResponse(entity.getId(), entity.getName(), entity.getDescription()));
         }).orElse(Optional.empty());
     }
 

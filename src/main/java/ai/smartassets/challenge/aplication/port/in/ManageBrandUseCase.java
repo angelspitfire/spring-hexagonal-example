@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.aplication.port.in;
 
+import ai.smartassets.challenge.aplication.dto.BrandResponse;
+import ai.smartassets.challenge.aplication.dto.BrandCreationRequest;
 import ai.smartassets.challenge.domain.Brand;
 import org.springframework.data.domain.Pageable;
 
@@ -8,13 +10,13 @@ import java.util.Optional;
 
 public interface ManageBrandUseCase {
 
-    Brand createBrand(Brand brand);
+    BrandResponse createBrand(BrandCreationRequest brand);
 
-    List<Brand> listBrands(Pageable pageable);
+    List<BrandResponse> listBrands(Pageable pageable);
 
-    Optional<Brand> getBrandById(String id);
+    Optional<BrandResponse> getBrandById(String id);
 
-    Optional<Brand> updateBrand(String id, Brand brand);
+    Optional<BrandResponse> updateBrand(String id, Brand brand);
 
     boolean deleteBrand(String id);
 }

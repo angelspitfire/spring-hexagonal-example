@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.CreativeResponse;
+import ai.smartassets.challenge.aplication.dto.CreativeUpdateRequest;
 import ai.smartassets.challenge.aplication.port.in.ManageCreativeUseCase;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepositoryPort;
 import ai.smartassets.challenge.domain.Creative;
@@ -22,27 +24,26 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
     }
 
     @Override
-    public Creative createCreative(Creative creative) {
+    public CreativeResponse createCreative(Creative creative) {
         CreativeEntity entity = getEntity(creative);
         return getCreative(creativeRepository.save(entity));
     }
 
     @Override
-    public List<Creative> listCreatives(PageRequest pageRequest) {
+    public List<CreativeResponse> listCreatives(PageRequest pageRequest) {
         return creativeRepository.findAll(pageRequest).stream().map(ManageCreativeUseCaseImpl::getCreative).toList();
     }
 
     @Override
-    public Optional<Creative> getCreativeById(String creativeId) {
+    public Optional<CreativeResponse> getCreativeById(String creativeId) {
         return creativeRepository.findById(creativeId).map(ManageCreativeUseCaseImpl::getCreative);
     }
 
     @Override
-    public Optional<Creative> updateCreative(String creativeId, Creative creative) {
+    public Optional<CreativeResponse> updateCreative(String creativeId, CreativeUpdateRequest creative) {
         return creativeRepository.findById(creativeId).map(creativeEntity -> {
-            creativeEntity.setName(creative.getName());
-            creativeEntity.setDescription(creative.getDescription());
-            creativeEntity.setCreativeUrl(creative.getCreativeUrl());
+            creativeEntity.setName(creative.name());
+            creativeEntity.setDescription(creative.description());
             return getCreative(creativeRepository.save(creativeEntity));
         });
     }
@@ -60,7 +61,7 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
         return new CreativeEntity(creative.getCreativeId(), creative.getName(), creative.getDescription(), creative.getCreativeUrl(), creative.getCampaignId());
     }
 
-    private static Creative getCreative(CreativeEntity creativeEntity) {
-        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
+    private static CreativeResponse getCreative(CreativeEntity creativeEntity) {
+        return new CreativeResponse(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
     }
 }

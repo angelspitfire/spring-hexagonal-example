@@ -1,5 +1,8 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.CreativeResponse;
+import ai.smartassets.challenge.aplication.dto.CreativeUpdateRequest;
+import ai.smartassets.challenge.aplication.dto.CreativeUploadRequest;
 import ai.smartassets.challenge.aplication.port.out.CreativeRepositoryPort;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity;
@@ -39,13 +42,13 @@ class ManageCreativeUseCaseImplTest {
 
         when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(creativeEntity);
 
-        Creative result = manageCreativeUseCase.createCreative(creative);
+        CreativeResponse result = manageCreativeUseCase.createCreative(creative);
 
         verify(creativeRepository).save(creativeEntity);
-        assertThat(result.getCreativeId()).isEqualTo(creativeEntity.getId());
-        assertThat(result.getName()).isEqualTo(creativeEntity.getName());
-        assertThat(result.getDescription()).isEqualTo(creativeEntity.getDescription());
-        assertThat(result.getCreativeUrl()).isEqualTo(creativeEntity.getCreativeUrl());
+        assertThat(result.creativeId()).isEqualTo(creativeEntity.getId());
+        assertThat(result.name()).isEqualTo(creativeEntity.getName());
+        assertThat(result.description()).isEqualTo(creativeEntity.getDescription());
+        assertThat(result.creativeUrl()).isEqualTo(creativeEntity.getCreativeUrl());
     }
 
     @Test
@@ -56,16 +59,16 @@ class ManageCreativeUseCaseImplTest {
         Page<CreativeEntity> page = new PageImpl<>(creativeList);
         when(creativeRepository.findAll(pageRequest)).thenReturn(page);
 
-        List<Creative> result = manageCreativeUseCase.listCreatives(pageRequest);
+        List<CreativeResponse> result = manageCreativeUseCase.listCreatives(pageRequest);
 
         verify(creativeRepository).findAll(pageRequest);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
 
-        assertThat(creative.getId()).isEqualTo(result.get(0).getCreativeId());
-        assertThat(creative.getName()).isEqualTo(result.get(0).getName());
-        assertThat(creative.getDescription()).isEqualTo(result.get(0).getDescription());
-        assertThat(creative.getCreativeUrl()).isEqualTo(result.get(0).getCreativeUrl());
+        assertThat(creative.getId()).isEqualTo(result.get(0).creativeId());
+        assertThat(creative.getName()).isEqualTo(result.get(0).name());
+        assertThat(creative.getDescription()).isEqualTo(result.get(0).description());
+        assertThat(creative.getCreativeUrl()).isEqualTo(result.get(0).creativeUrl());
     }
 
     @Test
@@ -74,14 +77,14 @@ class ManageCreativeUseCaseImplTest {
         Optional<CreativeEntity> creativeEntity = Optional.of(new CreativeEntity("1", "Test Creative", "Description", "http://test.com/doc.pdf", "1"));
         when(creativeRepository.findById(id)).thenReturn(creativeEntity);
 
-        Optional<Creative> result = manageCreativeUseCase.getCreativeById(id);
+        Optional<CreativeResponse> result = manageCreativeUseCase.getCreativeById(id);
 
         verify(creativeRepository).findById(id);
 
-        assertThat(creativeEntity.get().getCreativeUrl()).isEqualTo(result.get().getCreativeUrl());
-        assertThat(creativeEntity.get().getDescription()).isEqualTo(result.get().getDescription());
-        assertThat(creativeEntity.get().getName()).isEqualTo(result.get().getName());
-        assertThat(creativeEntity.get().getId()).isEqualTo(result.get().getCreativeId());
+        assertThat(creativeEntity.get().getId()).isEqualTo(result.get().creativeId());
+        assertThat(creativeEntity.get().getDescription()).isEqualTo(result.get().description());
+        assertThat(creativeEntity.get().getName()).isEqualTo(result.get().name());
+        assertThat(creativeEntity.get().getId()).isEqualTo(result.get().creativeId());
     }
 
     @Test
@@ -93,13 +96,13 @@ class ManageCreativeUseCaseImplTest {
         when(creativeRepository.findById(id)).thenReturn(Optional.of(existingCreativeEntity));
         when(creativeRepository.save(any(CreativeEntity.class))).thenReturn(updatedCreativeEntity);
 
-        Creative updatedCreative = new Creative(updatedCreativeEntity.getId(), updatedCreativeEntity.getName(), updatedCreativeEntity.getDescription(), updatedCreativeEntity.getCreativeUrl(), updatedCreativeEntity.getCampaignId());
-        Optional<Creative> result = manageCreativeUseCase.updateCreative(id, updatedCreative);
+        CreativeUpdateRequest updatedCreative = new CreativeUpdateRequest(updatedCreativeEntity.getName(), updatedCreativeEntity.getDescription());
+        Optional<CreativeResponse> result = manageCreativeUseCase.updateCreative(id, updatedCreative);
 
         verify(creativeRepository).findById(id);
         verify(creativeRepository).save(existingCreativeEntity);
         assertTrue(result.isPresent());
-        assertEquals("Updated Name", result.get().getName());
+        assertEquals("Updated Name", result.get().name());
     }
 
     @Test

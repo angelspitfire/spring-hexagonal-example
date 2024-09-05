@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
+import ai.smartassets.challenge.aplication.dto.BrandResponse;
+import ai.smartassets.challenge.aplication.dto.BrandCreationRequest;
 import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
 import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
@@ -35,12 +37,12 @@ class ManageBrandUseCaseImplTest {
         BrandEntity brandEntity = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.save(any(BrandEntity.class))).thenReturn(brandEntity);
 
-        Brand brand = new Brand("1", "Test Brand", "Description");
-        Brand createdBrand = manageBrandUseCase.createBrand(brand);
+        BrandCreationRequest brand = new BrandCreationRequest("Test Brand", "Description");
+        BrandResponse createdBrand = manageBrandUseCase.createBrand(brand);
 
-        assertThat(createdBrand.getBrandId()).isEqualTo(brandEntity.getId());
-        assertThat(createdBrand.getName()).isEqualTo(brandEntity.getName());
-        assertThat(createdBrand.getDescription()).isEqualTo(brandEntity.getDescription());
+        assertThat(createdBrand.brandId()).isEqualTo(brandEntity.getId());
+        assertThat(createdBrand.name()).isEqualTo(brandEntity.getName());
+        assertThat(createdBrand.description()).isEqualTo(brandEntity.getDescription());
     }
 
     @Test
@@ -50,12 +52,12 @@ class ManageBrandUseCaseImplTest {
         Page<BrandEntity> brandPage = new PageImpl<>(Collections.singletonList(brand));
         when(brandRepositoryPort.findAll(any(PageRequest.class))).thenReturn(brandPage);
 
-        List<Brand> result = manageBrandUseCase.listBrands(pageable);
+        List<BrandResponse> result = manageBrandUseCase.listBrands(pageable);
 
         assertFalse(result.isEmpty());
-        assertThat(result.get(0).getBrandId()).isEqualTo(brand.getId());
-        assertThat(result.get(0).getName()).isEqualTo(brand.getName());
-        assertThat(result.get(0).getDescription()).isEqualTo(brand.getDescription());
+        assertThat(result.get(0).brandId()).isEqualTo(brand.getId());
+        assertThat(result.get(0).name()).isEqualTo(brand.getName());
+        assertThat(result.get(0).description()).isEqualTo(brand.getDescription());
     }
 
     @Test
@@ -63,12 +65,12 @@ class ManageBrandUseCaseImplTest {
         BrandEntity brand = new BrandEntity("1", "Test Brand", "Description");
         when(brandRepositoryPort.findById("1")).thenReturn(Optional.of(brand));
 
-        Optional<Brand> foundBrand = manageBrandUseCase.getBrandById("1");
+        Optional<BrandResponse> foundBrand = manageBrandUseCase.getBrandById("1");
 
         assertTrue(foundBrand.isPresent());
-        assertThat(foundBrand.get().getBrandId()).isEqualTo(brand.getId());
-        assertThat(foundBrand.get().getName()).isEqualTo(brand.getName());
-        assertThat(foundBrand.get().getDescription()).isEqualTo(brand.getDescription());
+        assertThat(foundBrand.get().brandId()).isEqualTo(brand.getId());
+        assertThat(foundBrand.get().name()).isEqualTo(brand.getName());
+        assertThat(foundBrand.get().description()).isEqualTo(brand.getDescription());
     }
 
     @Test
@@ -79,11 +81,12 @@ class ManageBrandUseCaseImplTest {
         when(brandRepositoryPort.save(any(BrandEntity.class))).thenReturn(updatedEntityBrand);
 
         Brand updatedBrand = new Brand(updatedEntityBrand.getId(), updatedEntityBrand.getName(), updatedEntityBrand.getDescription());
-        Optional<Brand> result = manageBrandUseCase.updateBrand("1", updatedBrand);
+        Optional<BrandResponse> result = manageBrandUseCase.updateBrand("1", updatedBrand);
 
         assertTrue(result.isPresent());
-        assertEquals(updatedEntityBrand.getName(), result.get().getName());
-        assertEquals(updatedEntityBrand.getDescription(), result.get().getDescription());
+        assertThat(result.get().brandId()).isEqualTo(updatedEntityBrand.getId());
+        assertEquals(updatedEntityBrand.getName(), result.get().name());
+        assertEquals(updatedEntityBrand.getDescription(), result.get().description());
     }
 
     @Test

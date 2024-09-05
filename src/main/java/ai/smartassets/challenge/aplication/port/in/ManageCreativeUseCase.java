@@ -1,5 +1,7 @@
 package ai.smartassets.challenge.aplication.port.in;
 
+import ai.smartassets.challenge.aplication.dto.CreativeResponse;
+import ai.smartassets.challenge.aplication.dto.CreativeUpdateRequest;
 import ai.smartassets.challenge.domain.Creative;
 import org.springframework.data.domain.PageRequest;
 
@@ -7,13 +9,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ManageCreativeUseCase {
-    Creative createCreative(Creative creative);
+    CreativeResponse createCreative(Creative creative);
 
-    List<Creative> listCreatives(PageRequest pageRequest);
+    List<CreativeResponse> listCreatives(PageRequest pageRequest);
 
-    Optional<Creative> getCreativeById(String creativeId);
+    Optional<CreativeResponse> getCreativeById(String creativeId);
 
-    Optional<Creative> updateCreative(String creativeId, Creative creative);
+    Optional<CreativeResponse> updateCreative(String creativeId, CreativeUpdateRequest creative);
 
     boolean deleteCreative(String creativeId);
 }
