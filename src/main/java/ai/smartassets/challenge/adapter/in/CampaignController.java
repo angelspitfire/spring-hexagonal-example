@@ -1,8 +1,8 @@
 package ai.smartassets.challenge.adapter.in;
 
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
 import ai.smartassets.challenge.aplication.dto.CampaignUpdateDto;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
-import ai.smartassets.challenge.domain.Campaign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -21,21 +21,21 @@ public class CampaignController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Campaign>> listCampaigns(@RequestParam(value = "page", defaultValue = "0") int page,
+    public ResponseEntity<List<CampaignResponse>> listCampaigns(@RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Campaign> campaigns = manageCampaignUseCase.listCampaigns(PageRequest.of(page, size));
+        List<CampaignResponse> campaigns = manageCampaignUseCase.listCampaigns(PageRequest.of(page, size));
         return ResponseEntity.ok(campaigns);
     }
 
     @GetMapping("/{campaignId}")
-    public ResponseEntity<Campaign> getCampaignById(@PathVariable String campaignId) {
+    public ResponseEntity<CampaignResponse> getCampaignById(@PathVariable String campaignId) {
         return manageCampaignUseCase.getCampaignById(campaignId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{campaignId}")
-    public ResponseEntity<Campaign> updateCampaign(@PathVariable String campaignId, @RequestBody CampaignUpdateDto campaign) {
+    public ResponseEntity<CampaignResponse> updateCampaign(@PathVariable String campaignId, @RequestBody CampaignUpdateDto campaign) {
         return manageCampaignUseCase.updateCampaign(campaignId, campaign)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

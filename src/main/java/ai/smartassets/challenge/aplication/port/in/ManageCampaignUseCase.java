@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.port.in;
 
 import ai.smartassets.challenge.aplication.dto.CampaignCreationDTO;
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
 import ai.smartassets.challenge.aplication.dto.CampaignUpdateDto;
 import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
 import ai.smartassets.challenge.domain.Campaign;
@@ -15,17 +16,17 @@ import java.util.Optional;
 
 public interface ManageCampaignUseCase {
 
-    List<Campaign> listCampaigns(PageRequest pageRequest);
+    List<CampaignResponse> listCampaigns(PageRequest pageRequest);
 
-    Optional<Campaign> getCampaignById(String campaignId);;
+    Optional<CampaignResponse> getCampaignById(String campaignId);;
 
-    Optional<Campaign> updateCampaign(@NotNull @NotBlank String campaignId, @Valid CampaignUpdateDto campaignDto);
+    Optional<CampaignResponse> updateCampaign(@NotNull @NotBlank String campaignId, @Valid CampaignUpdateDto campaignDto);
 
     boolean deleteCampaign(String campaignId);
 
-    Campaign createCampaignForBrand(String brandId, @Valid CampaignCreationDTO campaignDTO);
+    CampaignResponse createCampaignForBrand(String brandId, @Valid CampaignCreationDTO campaignDTO);
 
-    List<Campaign> findCampaignsByBrandId(String brandId, PageRequest pageRequest);
+    List<CampaignResponse> findCampaignsByBrandId(String brandId, PageRequest pageRequest);
 
     List<Creative> findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest);
 

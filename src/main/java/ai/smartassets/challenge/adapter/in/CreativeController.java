@@ -1,9 +1,8 @@
 package ai.smartassets.challenge.adapter.in;
 
-import ai.smartassets.challenge.aplication.dto.CreativeDTO;
+import ai.smartassets.challenge.aplication.dto.CreativeResponse;
 import ai.smartassets.challenge.aplication.dto.CreativeUpdateDTO;
 import ai.smartassets.challenge.aplication.port.in.ManageCreativeUseCase;
-import ai.smartassets.challenge.domain.Creative;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
@@ -22,21 +21,21 @@ public class CreativeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Creative>> listCreatives(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                        @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Creative> creatives = manageCreativeUseCase.listCreatives(PageRequest.of(page, size));
+    public ResponseEntity<List<CreativeResponse>> listCreatives(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                                @RequestParam(value = "size", defaultValue = "10") int size) {
+        List<CreativeResponse> creatives = manageCreativeUseCase.listCreatives(PageRequest.of(page, size));
         return ResponseEntity.ok(creatives);
     }
 
     @GetMapping("/{creativeId}")
-    public ResponseEntity<Creative> getCreativeById(@PathVariable String creativeId) {
+    public ResponseEntity<CreativeResponse> getCreativeById(@PathVariable String creativeId) {
         return manageCreativeUseCase.getCreativeById(creativeId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PatchMapping("/{creativeId}")
-    public ResponseEntity<Creative> updateCreative(@PathVariable String creativeId, @RequestBody CreativeUpdateDTO creative) {
+    public ResponseEntity<CreativeResponse> updateCreative(@PathVariable String creativeId, @RequestBody CreativeUpdateDTO creative) {
         return manageCreativeUseCase.updateCreative(creativeId, creative)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

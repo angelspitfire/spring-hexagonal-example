@@ -1,10 +1,10 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.dto.CampaignCreationDTO;
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
 import ai.smartassets.challenge.aplication.dto.CampaignUpdateDto;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.port.out.*;
-import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
@@ -56,14 +56,14 @@ class ManageCampaignUseCaseImplTest {
         Page<CampaignEntity> page = new PageImpl<>(campaignList, pageRequest, campaignList.size());
         when(campaignRepository.findAll(pageRequest)).thenReturn(page);
 
-        List<Campaign> result = manageCampaignUseCase.listCampaigns(pageRequest);
+        List<CampaignResponse> result = manageCampaignUseCase.listCampaigns(pageRequest);
 
         verify(campaignRepository).findAll(pageRequest);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
-        assertThat(result.get(0).getCampaignId()).isEqualTo(campaign.getId());
-        assertThat(result.get(0).getName()).isEqualTo(campaign.getName());
-        assertThat(result.get(0).getDescription()).isEqualTo(campaign.getDescription());
+        assertThat(result.get(0).campaignId()).isEqualTo(campaign.getId());
+        assertThat(result.get(0).name()).isEqualTo(campaign.getName());
+        assertThat(result.get(0).description()).isEqualTo(campaign.getDescription());
     }
 
     @Test
@@ -72,12 +72,12 @@ class ManageCampaignUseCaseImplTest {
         Optional<CampaignEntity> campaign = Optional.of(mock(CampaignEntity.class));
         when(campaignRepository.findById(id)).thenReturn(campaign);
 
-        Optional<Campaign> result = manageCampaignUseCase.getCampaignById(id);
+        Optional<CampaignResponse> result = manageCampaignUseCase.getCampaignById(id);
 
         verify(campaignRepository).findById(id);
-        assertThat(result.get().getCampaignId()).isEqualTo(campaign.get().getId());
-        assertThat(result.get().getName()).isEqualTo(campaign.get().getName());
-        assertThat(result.get().getDescription()).isEqualTo(campaign.get().getDescription());
+        assertThat(result.get().campaignId()).isEqualTo(campaign.get().getId());
+        assertThat(result.get().name()).isEqualTo(campaign.get().getName());
+        assertThat(result.get().description()).isEqualTo(campaign.get().getDescription());
     }
 
     @Test
@@ -96,13 +96,13 @@ void givenCampaignIdAndUpdatedInfo_whenUpdateCampaign_thenCampaignIsUpdatedSucce
     when(campaignRepository.save(any(CampaignEntity.class))).thenReturn(updatedCampaignEntity);
 
     CampaignUpdateDto updatedCampaign = new CampaignUpdateDto("Updated Name", "Updated Description");
-    Optional<Campaign> result = manageCampaignUseCase.updateCampaign(id, updatedCampaign);
+    Optional<CampaignResponse> result = manageCampaignUseCase.updateCampaign(id, updatedCampaign);
 
     verify(campaignRepository).findById(id);
     verify(campaignRepository).save(existingCampaignEntity);
     assertTrue(result.isPresent());
-    assertEquals("Updated Name", result.get().getName());
-    assertEquals("Updated Description", result.get().getDescription());
+    assertEquals("Updated Name", result.get().name());
+    assertEquals("Updated Description", result.get().description());
 }
 
     @Test
@@ -127,15 +127,15 @@ void givenExistingBrandIdAndCampaignDetails_whenCreateCampaignForBrand_thenCampa
     when(brandRepository.findById(brandId)).thenReturn(Optional.of(new BrandEntity(brandId, "Brand name", "Description")));
     when(campaignRepository.save(any(CampaignEntity.class))).thenReturn(campaignEntity);
 
-    Campaign result = manageCampaignUseCase.createCampaignForBrand(brandId, campaignDTO);
+    CampaignResponse result = manageCampaignUseCase.createCampaignForBrand(brandId, campaignDTO);
 
     verify(brandRepository).existsById(brandId);
     verify(brandRepository).findById(brandId);
     verify(campaignRepository).save(any(CampaignEntity.class));
-    assertNotNull(result.getCampaignId());
+    assertNotNull(result.campaignId());
     assertEquals(brandId, campaignEntity.getBrandId());
-    assertEquals(campaignDTO.getName(), result.getName());
-    assertEquals(campaignDTO.getDescription(), result.getDescription());
+    assertEquals(campaignDTO.getName(), result.name());
+    assertEquals(campaignDTO.getDescription(), result.description());
 }
 
     @Test
@@ -162,11 +162,11 @@ void givenExistingBrandIdAndCampaignDetails_whenCreateCampaignForBrand_thenCampa
         when(campaignRepository.findByBrandId(anyString(), any(Pageable.class))).thenReturn(campaignEntities);
 
         PageRequest pageRequest = PageRequest.of(0, 10);
-        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
+        List<CampaignResponse> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
 
         assertEquals(2, campaigns.size());
-        assertEquals("Campaign 1", campaigns.get(0).getName());
-        assertEquals("Campaign 2", campaigns.get(1).getName());
+        assertEquals("Campaign 1", campaigns.get(0).name());
+        assertEquals("Campaign 2", campaigns.get(1).name());
     }
 
 

@@ -2,7 +2,6 @@ package ai.smartassets.challenge.adapter.out.persistence;
 
 import ai.smartassets.challenge.aplication.port.out.CampaignRepository;
 import ai.smartassets.challenge.aplication.port.out.CampaignRepositoryPort;
-import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.infraestructure.persistence.model.CampaignEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

@@ -1,12 +1,8 @@
 package ai.smartassets.challenge.adapter.in;
 
-import ai.smartassets.challenge.aplication.dto.BrandCreationDto;
-import ai.smartassets.challenge.aplication.dto.BrandUpdateDto;
-import ai.smartassets.challenge.aplication.dto.CampaignCreationDTO;
+import ai.smartassets.challenge.aplication.dto.*;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
-import ai.smartassets.challenge.domain.Brand;
-import ai.smartassets.challenge.domain.Campaign;
 import ai.smartassets.challenge.domain.Creative;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -43,7 +39,7 @@ class BrandControllerTest {
     @Test
     void createBrand_Success() throws Exception {
         BrandCreationDto brandCreationDto = new BrandCreationDto("BrandName", "Description");
-        Brand createdBrand = new Brand("1", "BrandName", "Description");
+        BrandResponse createdBrand = new BrandResponse("1", "BrandName", "Description");
 
         when(manageBrandUseCase.createBrand(any(BrandCreationDto.class))).thenReturn(createdBrand);
 
@@ -51,13 +47,13 @@ class BrandControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(brandCreationDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.brandId").value(createdBrand.getBrandId()))
-                .andExpect(jsonPath("$.name").value(createdBrand.getName()));
+                .andExpect(jsonPath("$.brandId").value(createdBrand.brandId()))
+                .andExpect(jsonPath("$.name").value(createdBrand.name()));
     }
 
     @Test
     void listBrands_Success() throws Exception {
-        List<Brand> brands = List.of(new Brand("1", "BrandName", "Description"));
+        List<BrandResponse> brands = List.of(new BrandResponse("1", "BrandName", "Description"));
         PageRequest pageRequest = PageRequest.of(0, 10);
 
         when(manageBrandUseCase.listBrands(pageRequest)).thenReturn(brands);
@@ -65,18 +61,18 @@ class BrandControllerTest {
         mockMvc.perform(get("/brands?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].brandId").value(brands.get(0).getBrandId()));
+                .andExpect(jsonPath("$[0].brandId").value(brands.get(0).brandId()));
     }
 
     @Test
     void getBrandById_Exists() throws Exception {
-        Brand brand = new Brand("1", "BrandName", "Description");
+        BrandResponse brand = new BrandResponse("1", "BrandName", "Description");
         when(manageBrandUseCase.getBrandById("1")).thenReturn(Optional.of(brand));
 
         mockMvc.perform(get("/brands/1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.brandId").value(brand.getBrandId()))
-                .andExpect(jsonPath("$.name").value(brand.getName()));
+                .andExpect(jsonPath("$.brandId").value(brand.brandId()))
+                .andExpect(jsonPath("$.name").value(brand.name()));
     }
 
     @Test
@@ -90,15 +86,15 @@ class BrandControllerTest {
     @Test
     void updateBrand_Success() throws Exception {
         BrandUpdateDto brandUpdateDto = new BrandUpdateDto("UpdatedName", "UpdatedDescription");
-        Brand updatedBrand = new Brand("1", "UpdatedName", "UpdatedDescription");
+        BrandResponse updatedBrand = new BrandResponse("1", "UpdatedName", "UpdatedDescription");
         when(manageBrandUseCase.updateBrand(eq("1"), any(BrandUpdateDto.class))).thenReturn(Optional.of(updatedBrand));
 
         mockMvc.perform(patch("/brands/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(brandUpdateDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.brandId").value(updatedBrand.getBrandId()))
-                .andExpect(jsonPath("$.name").value(updatedBrand.getName()));
+                .andExpect(jsonPath("$.brandId").value(updatedBrand.brandId()))
+                .andExpect(jsonPath("$.name").value(updatedBrand.name()));
     }
 
     @Test
@@ -120,48 +116,48 @@ class BrandControllerTest {
     @Test
     void createCampaignForBrand_Success() throws Exception {
         CampaignCreationDTO campaignCreationDTO = new CampaignCreationDTO("CampaignName", "Description");
-        Campaign createdCampaign = new Campaign("1", "CampaignName", "Description");
+        CampaignResponse createdCampaign = new CampaignResponse("1", "CampaignName", "Description");
         when(manageCampaignUseCase.createCampaignForBrand(eq("1"), any(CampaignCreationDTO.class))).thenReturn(createdCampaign);
 
         mockMvc.perform(post("/brands/1/campaigns")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(campaignCreationDTO)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.campaignId").value(createdCampaign.getCampaignId()))
-                .andExpect(jsonPath("$.name").value(createdCampaign.getName()));
+                .andExpect(jsonPath("$.campaignId").value(createdCampaign.campaignId()))
+                .andExpect(jsonPath("$.name").value(createdCampaign.name()));
     }
 
     @Test
     void listCampaignsForBrand_Success() throws Exception {
-        List<Campaign> campaigns = List.of(new Campaign("1", "CampaignName", "Description"));
+        List<CampaignResponse> campaigns = List.of(new CampaignResponse("1", "CampaignName", "Description"));
         PageRequest pageRequest = PageRequest.of(0, 10);
         when(manageCampaignUseCase.findCampaignsByBrandId(eq("1"), any(PageRequest.class))).thenReturn(campaigns);
 
         mockMvc.perform(get("/brands/1/campaigns?page=0&size=10"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].campaignId").value(campaigns.get(0).getCampaignId()));
+                .andExpect(jsonPath("$[0].campaignId").value(campaigns.get(0).campaignId()));
     }
 
-@Test
-void listCreativesForCampaign_Success() throws Exception {
-    List<Creative> expectedCreatives = List.of(
-        new Creative("1", "CreativeName1", "Description1", "ImageURL1", "campaignId1"),
-        new Creative("2", "CreativeName2", "Description2", "ImageURL2", "campaignId2")
-    );
-    when(manageCampaignUseCase.findCreativesByBrandIdAndCampaignId("brandId1", "1", PageRequest.of(0, 10))).thenReturn(expectedCreatives);
+    @Test
+    void listCreativesForCampaign_Success() throws Exception {
+        List<Creative> expectedCreatives = List.of(
+                new Creative("1", "CreativeName1", "Description1", "ImageURL1", "campaignId1"),
+                new Creative("2", "CreativeName2", "Description2", "ImageURL2", "campaignId2")
+        );
+        when(manageCampaignUseCase.findCreativesByBrandIdAndCampaignId("brandId1", "1", PageRequest.of(0, 10))).thenReturn(expectedCreatives);
 
-    mockMvc.perform(get("/brands/brandId1/campaigns/1/creatives?page=0&size=10")
-                    .contentType(MediaType.APPLICATION_JSON))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$", hasSize(2)))
-        .andExpect(jsonPath("$[0].creativeId").value(expectedCreatives.get(0).getCreativeId()))
-        .andExpect(jsonPath("$[0].name").value(expectedCreatives.get(0).getName()))
-        .andExpect(jsonPath("$[0].description").value(expectedCreatives.get(0).getDescription()))
-        .andExpect(jsonPath("$[0].creativeUrl").value(expectedCreatives.get(0).getCreativeUrl()))
-        .andExpect(jsonPath("$[1].creativeId").value(expectedCreatives.get(1).getCreativeId()))
-        .andExpect(jsonPath("$[1].name").value(expectedCreatives.get(1).getName()))
-        .andExpect(jsonPath("$[1].description").value(expectedCreatives.get(1).getDescription()))
-        .andExpect(jsonPath("$[1].creativeUrl").value(expectedCreatives.get(1).getCreativeUrl()));
-}
+        mockMvc.perform(get("/brands/brandId1/campaigns/1/creatives?page=0&size=10")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].creativeId").value(expectedCreatives.get(0).getCreativeId()))
+                .andExpect(jsonPath("$[0].name").value(expectedCreatives.get(0).getName()))
+                .andExpect(jsonPath("$[0].description").value(expectedCreatives.get(0).getDescription()))
+                .andExpect(jsonPath("$[0].creativeUrl").value(expectedCreatives.get(0).getCreativeUrl()))
+                .andExpect(jsonPath("$[1].creativeId").value(expectedCreatives.get(1).getCreativeId()))
+                .andExpect(jsonPath("$[1].name").value(expectedCreatives.get(1).getName()))
+                .andExpect(jsonPath("$[1].description").value(expectedCreatives.get(1).getDescription()))
+                .andExpect(jsonPath("$[1].creativeUrl").value(expectedCreatives.get(1).getCreativeUrl()));
+    }
 }

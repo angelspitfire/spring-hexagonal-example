@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.dto.CampaignCreationDTO;
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
 import ai.smartassets.challenge.aplication.dto.CampaignUpdateDto;
 import ai.smartassets.challenge.aplication.dto.CreativeUploadDTO;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
@@ -16,7 +17,6 @@ import ai.smartassets.challenge.infraestructure.persistence.model.CreativeEntity
 import ai.smartassets.challenge.infraestructure.service.FileStorageService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -48,12 +48,12 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Optional<Campaign> getCampaignById(@NotBlank String id) {
+    public Optional<CampaignResponse> getCampaignById(@NotBlank String id) {
         return campaignRepository.findById(id).map(ManageCampaignUseCaseImpl::getCampaign);
     }
 
     @Override
-    public Optional<Campaign> updateCampaign(@NotBlank String campaignId, @Valid CampaignUpdateDto campaignDto) {
+    public Optional<CampaignResponse> updateCampaign(@NotBlank String campaignId, @Valid CampaignUpdateDto campaignDto) {
         validateEntityExists(campaignRepository::existsById, campaignId, Campaign.class);
         return campaignRepository.findById(campaignId).map(campaignEntity -> {
             campaignEntity.setName(campaignDto.getName());
@@ -61,7 +61,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
             CampaignEntity savedEntity = campaignRepository.save(campaignEntity);
 
             if (savedEntity != null) {
-                return Optional.of(convertToCampaignDomain(savedEntity));
+                return Optional.of(convertToCampaignResponse(savedEntity));
             } else {
                 throw new UpdateOperationException("Failed to update campaign with ID: " + campaignId);
             }
@@ -79,7 +79,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public Campaign createCampaignForBrand(@NotBlank String brandId, @Valid CampaignCreationDTO campaignDTO) {
+    public CampaignResponse createCampaignForBrand(@NotBlank String brandId, @Valid CampaignCreationDTO campaignDTO) {
         validateEntityExists(brandRepository::existsById, brandId, Brand.class);
 
         return brandRepository.findById(brandId)
@@ -108,7 +108,7 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public List<Campaign> listCampaigns(PageRequest pageRequest) {
+    public List<CampaignResponse> listCampaigns(PageRequest pageRequest) {
         return campaignRepository.findAll(pageRequest)
                 .stream()
                 .map(ManageCampaignUseCaseImpl::getCampaign)
@@ -116,9 +116,9 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
     }
 
     @Override
-    public List<Campaign> findCampaignsByBrandId(@NotBlank String brandId, PageRequest pageRequest) {
+    public List<CampaignResponse> findCampaignsByBrandId(@NotBlank String brandId, PageRequest pageRequest) {
         log.info("Starting to find campaigns for brandId: {}", brandId);
-        List<Campaign> campaigns = campaignRepository.findByBrandId(brandId, pageRequest)
+        List<CampaignResponse> campaigns = campaignRepository.findByBrandId(brandId, pageRequest)
                 .stream()
                 .map(ManageCampaignUseCaseImpl::getCampaign)
                 .toList();
@@ -137,8 +137,8 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
                 .toList();
     }
 
-    private Campaign convertToCampaignDomain(CampaignEntity campaignEntity) {
-        return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
+    private CampaignResponse convertToCampaignResponse(CampaignEntity campaignEntity) {
+        return new CampaignResponse(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
     }
 
     private String storeCreativeFile(MultipartFile file) throws IOException {
@@ -167,8 +167,8 @@ public class ManageCampaignUseCaseImpl implements ManageCampaignUseCase {
                 savedCreative.getCampaignId());
     }
 
-    private static Campaign getCampaign(CampaignEntity campaignEntity) {
-        return new Campaign(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
+    private static CampaignResponse getCampaign(CampaignEntity campaignEntity) {
+        return new CampaignResponse(campaignEntity.getId(), campaignEntity.getName(), campaignEntity.getDescription());
     }
 
     private static Creative getCreative(CreativeEntity e) {

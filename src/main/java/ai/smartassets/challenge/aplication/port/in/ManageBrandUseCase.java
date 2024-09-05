@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.port.in;
 
 import ai.smartassets.challenge.aplication.dto.BrandCreationDto;
+import ai.smartassets.challenge.aplication.dto.BrandResponse;
 import ai.smartassets.challenge.aplication.dto.BrandUpdateDto;
 import ai.smartassets.challenge.domain.Brand;
 import jakarta.validation.Valid;
@@ -13,13 +14,13 @@ import java.util.Optional;
 
 public interface ManageBrandUseCase {
 
-    Brand createBrand(@Valid BrandCreationDto brandCreationDto);
+    BrandResponse createBrand(@Valid BrandCreationDto brandCreationDto);
 
-    List<Brand> listBrands(Pageable pageable);
+    List<BrandResponse> listBrands(Pageable pageable);
 
-    Optional<Brand> getBrandById(String id);
+    Optional<BrandResponse> getBrandById(String id);
 
-    Optional<Brand> updateBrand(@NotNull @NotBlank String id, @Valid BrandUpdateDto brandDto);
+    Optional<BrandResponse> updateBrand(@NotNull @NotBlank String id, @Valid BrandUpdateDto brandDto);
 
     boolean deleteBrand(String id);
 }

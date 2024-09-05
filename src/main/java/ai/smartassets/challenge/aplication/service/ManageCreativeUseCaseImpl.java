@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.dto.CreativeDTO;
+import ai.smartassets.challenge.aplication.dto.CreativeResponse;
 import ai.smartassets.challenge.aplication.dto.CreativeUpdateDTO;
 import ai.smartassets.challenge.aplication.exception.CreativeNotFoundException;
 import ai.smartassets.challenge.aplication.port.in.ManageCreativeUseCase;
@@ -31,7 +32,7 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
     }
 
     @Override
-    public Creative createCreative(@Valid CreativeDTO creativeDTO) {
+    public CreativeResponse createCreative(@Valid CreativeDTO creativeDTO) {
 
         try {
             log.info("Creating a new creative: {}", creativeDTO.getName());
@@ -49,17 +50,17 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
     }
 
     @Override
-    public List<Creative> listCreatives(PageRequest pageRequest) {
+    public List<CreativeResponse> listCreatives(PageRequest pageRequest) {
         return creativeRepository.findAll(pageRequest).stream().map(ManageCreativeUseCaseImpl::getCreative).toList();
     }
 
     @Override
-    public Optional<Creative> getCreativeById(@NotBlank String creativeId) {
+    public Optional<CreativeResponse> getCreativeById(@NotBlank String creativeId) {
         return creativeRepository.findById(creativeId).map(ManageCreativeUseCaseImpl::getCreative);
     }
 
     @Override
-    public Optional<Creative> updateCreative(@NotBlank String creativeId, CreativeUpdateDTO creative) {
+    public Optional<CreativeResponse> updateCreative(@NotBlank String creativeId, CreativeUpdateDTO creative) {
 
         CreativeEntity creativeEntity = creativeRepository.findById(creativeId)
                 .orElseThrow(() -> new CreativeNotFoundException("Creative with id " + creativeId + " not found."));
@@ -81,8 +82,8 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
                 }).orElse(false);
     }
 
-    private Creative convertToCreativeDomain(CreativeEntity savedEntity) {
-        return new Creative(savedEntity.getId(),
+    private CreativeResponse convertToCreativeDomain(CreativeEntity savedEntity) {
+        return new CreativeResponse(savedEntity.getId(),
                 savedEntity.getName(),
                 savedEntity.getDescription(),
                 savedEntity.getCreativeUrl(),
@@ -98,7 +99,7 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
                 creativeDTO.getCampaignId());
     }
 
-    private static Creative getCreative(CreativeEntity creativeEntity) {
-        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
+    private static CreativeResponse getCreative(CreativeEntity creativeEntity) {
+        return new CreativeResponse(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
     }
 }

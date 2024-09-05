@@ -2,7 +2,6 @@ package ai.smartassets.challenge.adapter.out.persistence;
 
 import ai.smartassets.challenge.aplication.port.out.BrandRepository;
 import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
-import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

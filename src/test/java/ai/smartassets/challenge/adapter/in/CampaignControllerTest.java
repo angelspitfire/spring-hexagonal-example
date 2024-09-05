@@ -1,8 +1,8 @@
 package ai.smartassets.challenge.adapter.in;
 
+import ai.smartassets.challenge.aplication.dto.CampaignResponse;
 import ai.smartassets.challenge.aplication.dto.CampaignUpdateDto;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
-import ai.smartassets.challenge.domain.Campaign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,9 @@ class CampaignControllerTest {
 
     @Test
     void listCampaigns_Success() throws Exception {
-        List<Campaign> expectedCampaigns = List.of(
-                new Campaign("1", "CampaignName1", "Description1"),
-                new Campaign("2", "CampaignName2", "Description2")
+        List<CampaignResponse> expectedCampaigns = List.of(
+                new CampaignResponse("1", "CampaignName1", "Description1"),
+                new CampaignResponse("2", "CampaignName2", "Description2")
         );
         when(manageCampaignUseCase.listCampaigns(PageRequest.of(0, 10))).thenReturn(expectedCampaigns);
 
@@ -44,34 +44,34 @@ class CampaignControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].campaignId").value(expectedCampaigns.get(0).getCampaignId()))
-                .andExpect(jsonPath("$[1].campaignId").value(expectedCampaigns.get(1).getCampaignId()));
+                .andExpect(jsonPath("$[0].campaignId").value(expectedCampaigns.get(0).campaignId()))
+                .andExpect(jsonPath("$[1].campaignId").value(expectedCampaigns.get(1).campaignId()));
     }
 
     @Test
     void getCampaignById_Success() throws Exception {
-        Campaign expectedCampaign = new Campaign("1", "CampaignName", "Description");
+        CampaignResponse expectedCampaign = new CampaignResponse("1", "CampaignName", "Description");
         when(manageCampaignUseCase.getCampaignById(eq("1"))).thenReturn(Optional.of(expectedCampaign));
 
         mockMvc.perform(get("/campaigns/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.campaignId").value(expectedCampaign.getCampaignId()));
+                .andExpect(jsonPath("$.campaignId").value(expectedCampaign.campaignId()));
     }
 
     @Test
     void updateCampaign_Success() throws Exception {
         CampaignUpdateDto campaignUpdateDto = new CampaignUpdateDto("UpdatedCampaignName", "UpdatedDescription");
-        Campaign updatedCampaign = new Campaign("1", "UpdatedCampaignName", "UpdatedDescription");
+        CampaignResponse updatedCampaign = new CampaignResponse("1", "UpdatedCampaignName", "UpdatedDescription");
         when(manageCampaignUseCase.updateCampaign(eq("1"), any(CampaignUpdateDto.class))).thenReturn(Optional.of(updatedCampaign));
 
         mockMvc.perform(patch("/campaigns/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(campaignUpdateDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.campaignId").value(updatedCampaign.getCampaignId()))
-                .andExpect(jsonPath("$.name").value(updatedCampaign.getName()))
-                .andExpect(jsonPath("$.description").value(updatedCampaign.getDescription()));
+                .andExpect(jsonPath("$.campaignId").value(updatedCampaign.campaignId()))
+                .andExpect(jsonPath("$.name").value(updatedCampaign.name()))
+                .andExpect(jsonPath("$.description").value(updatedCampaign.description()));
     }
 
     @Test

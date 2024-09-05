@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.port.in;
 
 import ai.smartassets.challenge.aplication.dto.CreativeDTO;
+import ai.smartassets.challenge.aplication.dto.CreativeResponse;
 import ai.smartassets.challenge.aplication.dto.CreativeUpdateDTO;
 import ai.smartassets.challenge.domain.Creative;
 import jakarta.validation.Valid;
@@ -12,13 +13,13 @@ import java.util.Optional;
 
 public interface ManageCreativeUseCase {
 
-    Creative createCreative(@Valid CreativeDTO creativeDTO);
+    CreativeResponse createCreative(@Valid CreativeDTO creativeDTO);
 
-    List<Creative> listCreatives(PageRequest pageRequest);
+    List<CreativeResponse> listCreatives(PageRequest pageRequest);
 
-    Optional<Creative> getCreativeById(String creativeId);
+    Optional<CreativeResponse> getCreativeById(String creativeId);
 
-    Optional<Creative> updateCreative(@NotBlank String creativeId, CreativeUpdateDTO creative);
+    Optional<CreativeResponse> updateCreative(@NotBlank String creativeId, CreativeUpdateDTO creative);
 
     boolean deleteCreative(String creativeId);
 }

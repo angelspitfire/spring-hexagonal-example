@@ -1,6 +1,7 @@
 package ai.smartassets.challenge.aplication.service;
 
 import ai.smartassets.challenge.aplication.dto.BrandCreationDto;
+import ai.smartassets.challenge.aplication.dto.BrandResponse;
 import ai.smartassets.challenge.aplication.dto.BrandUpdateDto;
 import ai.smartassets.challenge.aplication.exception.BrandCreationException;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
@@ -33,7 +34,7 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
     }
 
     @Override
-    public Brand createBrand(@Valid BrandCreationDto brandCreationDto) {
+    public BrandResponse createBrand(@Valid BrandCreationDto brandCreationDto) {
         log.info("Attempting to create brand: {}", brandCreationDto.getName());
         try {
             BrandEntity newBrandEntity = mapToBrandEntity(brandCreationDto);
@@ -50,17 +51,17 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
     }
 
     @Override
-    public List<Brand> listBrands(Pageable pageable) {
+    public List<BrandResponse> listBrands(Pageable pageable) {
         return brandRepository.findAll(pageable).stream().map(this::mapToBrand).toList();
     }
 
     @Override
-    public Optional<Brand> getBrandById(@NotBlank  String id) {
+    public Optional<BrandResponse> getBrandById(@NotBlank  String id) {
         return brandRepository.findById(id).map(this::mapToBrand);
     }
 
     @Override
-    public Optional<Brand> updateBrand(@NotBlank String id, @Valid BrandUpdateDto brandDto) {
+    public Optional<BrandResponse> updateBrand(@NotBlank String id, @Valid BrandUpdateDto brandDto) {
         return brandRepository.findById(id).map(brandEntity -> {
             brandEntity.setName(brandDto.getName());
             brandEntity.setDescription(brandDto.getDescription());
@@ -86,7 +87,7 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
         return new BrandEntity(null, brandCreationDto.getName(), brandCreationDto.getDescription());
     }
 
-    private Brand mapToBrand(BrandEntity brandEntity) {
-        return new Brand(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
+    private BrandResponse mapToBrand(BrandEntity brandEntity) {
+        return new BrandResponse(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
     }
 }
