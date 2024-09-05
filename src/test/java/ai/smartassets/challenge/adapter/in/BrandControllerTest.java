@@ -4,6 +4,7 @@ import ai.smartassets.challenge.aplication.dto.*;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.in.ManageCampaignUseCase;
 import ai.smartassets.challenge.domain.Creative;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -49,6 +52,17 @@ class BrandControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.brandId").value(createdBrand.brandId()))
                 .andExpect(jsonPath("$.name").value(createdBrand.name()));
+    }
+
+    @Test
+    void createBrand_Exception() throws Exception {
+        BrandCreationDto brandCreationDto = new BrandCreationDto();
+        when(manageBrandUseCase.createBrand(any(BrandCreationDto.class))).thenThrow(new RuntimeException("Test Exception"));
+
+        mockMvc.perform(post("/brands")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(brandCreationDto)))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test

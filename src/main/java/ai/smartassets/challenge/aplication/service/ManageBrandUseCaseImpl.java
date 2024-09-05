@@ -7,7 +7,6 @@ import ai.smartassets.challenge.aplication.exception.BrandCreationException;
 import ai.smartassets.challenge.aplication.exception.BrandNotFoundException;
 import ai.smartassets.challenge.aplication.port.in.ManageBrandUseCase;
 import ai.smartassets.challenge.aplication.port.out.BrandRepositoryPort;
-import ai.smartassets.challenge.domain.Brand;
 import ai.smartassets.challenge.infraestructure.persistence.model.BrandEntity;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

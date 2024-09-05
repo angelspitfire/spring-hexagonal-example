@@ -89,4 +89,12 @@ class BrandRepositoryAdapterTest {
         assertThat(result.getContent()).hasSize(1);
         assertEquals("brand123", result.getContent().get(0).getId());
     }
+
+    @Test
+    public void deleteBrand_Success() {
+        BrandEntity brand = new BrandEntity("brand123", "Brand Name", "Brand Description");
+        doNothing().when(brandMongoRepository).delete(brand);
+        brandRepositoryAdapter.delete(brand);
+        verify(brandMongoRepository).delete(brand);
+    }
 }
