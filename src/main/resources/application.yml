@@ -1,0 +1,34 @@
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version : 6.0.5
+
+springdoc:
+  swagger-ui:
+    path: "/swagger-ui.html"
+  api-docs:
+    path: "/api-docs"
+
+file:
+  storage:
+    location: /path/to/storage
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      uri: "localhost:27017/challenge"
+
+---
+spring:
+  profiles:
+    config:
+      activate:
+        on-profile: docker
+  main:
+    allow-bean-definition-overriding: true
+  data:
+    mongodb:
+      uri: "${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/challenge}"

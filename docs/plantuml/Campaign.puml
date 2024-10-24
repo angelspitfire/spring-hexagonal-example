@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+
+class CampaignController {
+    +createCampaign(campaign: Campaign): ResponseEntity<Campaign>
+    +listCampaigns(page: int, size: int): ResponseEntity<List<Campaign>>
+    +getCampaignById(campaignId: String): ResponseEntity<Campaign>
+    +updateCampaign(campaignId: String, campaign: Campaign): ResponseEntity<Campaign>
+    +deleteCampaign(campaignId: String): ResponseEntity<?>
+}
+
+interface ManageCampaignUseCase {
+    +createCampaign(campaign: Campaign): Campaign
+    +listCampaigns(PageRequest pageRequest): List<Campaign>
+    +getCampaignById(campaignId: String): Optional<Campaign>
+    +updateCampaign(campaignId: String, campaign: Campaign): Optional<Campaign>
+    +deleteCampaign(campaignId: String): boolean
+    +createCampaignForBrand(brandId: String, campaign: Campaign): Campaign
+    +findCampaignsByBrandId(brandId: String, PageRequest pageRequest): List<Campaign>
+    +findCreativesByBrandIdAndCampaignId(brandId: String, campaignId: String, PageRequest pageRequest): List<Creative>
+}
+
+class CampaignRepository {
+    +findByBrandId(brandId: String, pageable: Pageable): List<CampaignEntity>
+    +findById(campaignId: String): Optional<CampaignEntity>
+    +save(campaign: CampaignEntity): CampaignEntity
+    +delete(campaign: CampaignEntity): void
+}
+
+class CreativeRepository {
+    +findByCampaignId(campaignId: String): List<CreativeEntity>
+    +findById(creativeId: String): Optional<CreativeEntity>
+    +save(creative: CreativeEntity): CreativeEntity
+    +delete(creative: CreativeEntity): void
+}
+
+CampaignController --> ManageCampaignUseCase : uses
+
+ManageCampaignUseCase ..> CampaignRepository : interacts
+ManageCampaignUseCase ..> CreativeRepository : interacts
+
+@enduml

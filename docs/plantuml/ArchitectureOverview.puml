@@ -1,0 +1,130 @@
+@startuml
+!theme plain
+
+package "Controller Layer" {
+    class BrandController {
+        +createBrand(brand: Brand): ResponseEntity<Brand>
+        +listBrands(page: int, size: int): ResponseEntity<List<Brand>>
+        +getBrandById(brandId: String): ResponseEntity<Brand>
+        +updateBrand(brandId: String, brand: Brand): ResponseEntity<Brand>
+        +deleteBrand(brandId: String): ResponseEntity<?>
+        +createCampaignForBrand(brandId: String, campaign: Campaign): ResponseEntity<Campaign>
+        +listCampaignsForBrand(brandId: String, page: int, size: int): ResponseEntity<List<Campaign>>
+        +listCreativesForCampaign(brandId: String, campaignId: String, page: int, size: int): ResponseEntity<List<Creative>>
+        +uploadCreative(brandId: String, campaignId: String, file: MultipartFile, name: String, description: String): ResponseEntity<Creative>
+    }
+    class CampaignController {
+        +createCampaign(campaign: Campaign): ResponseEntity<Campaign>
+        +listCampaigns(page: int, size: int): ResponseEntity<List<Campaign>>
+        +getCampaignById(campaignId: String): ResponseEntity<Campaign>
+        +updateCampaign(campaignId: String, campaign: Campaign): ResponseEntity<Campaign>
+        +deleteCampaign(campaignId: String): ResponseEntity<?>
+    }
+    class CreativeController {
+        +createCreative(creative: Creative): ResponseEntity<Creative>
+        +listCreatives(page: int, size: int): ResponseEntity<List<Creative>>
+        +getCreativeById(creativeId: String): ResponseEntity<Creative>
+        +updateCreative(creativeId: String, creative: Creative): ResponseEntity<Creative>
+        +deleteCreative(creativeId: String): ResponseEntity<?>
+    }
+}
+
+package "Service Layer" {
+    interface ManageCampaignUseCase {
+        +createCampaign(String brandId, Campaign campaign)
+        +listCampaigns(PageRequest pageRequest)
+        +getCampaignById(String campaignId): Optional<Campaign>
+        +updateCampaign(String campaignId, Campaign campaign): Optional<Campaign>
+        +deleteCampaign(String campaignId): boolean
+        +createCampaignForBrand(String brandId, Campaign campaign)
+        +findCampaignsByBrandId(String brandId, PageRequest pageRequest)
+        +findCreativesByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest)
+    }
+    interface ManageCreativeUseCase {
+        +listCreatives(PageRequest pageRequest): List<Creative>
+        +getCreativeById(String creativeId): Optional<Creative>
+        +updateCreative(String creativeId, Creative creative): Optional<Creative>
+        +deleteCreative(String creativeId): boolean
+    }
+}
+
+package "Repository Layer" {
+    class BrandRepository
+    class CampaignRepository
+    class CreativeRepository
+}
+
+package "Model Layer" {
+    class BrandEntity {
+        -id: String
+        -name: String
+        -description: String
+    }
+    class CampaignEntity {
+        -id: String
+        -name: String
+        -description: String
+        -brandId: String
+    }
+    class CreativeEntity {
+        -id: String
+        -name: String
+        -description: String
+        -creativeUrl: String
+        -campaignId: String
+    }
+}
+
+package "Domain Layer" {
+    class Brand
+    class Campaign
+    class Creative
+}
+
+BrandController --> "Service Layer"
+CampaignController --> "Service Layer"
+CreativeController --> "Service Layer"
+
+"Service Layer" --> "Repository Layer"
+
+package "Infrastructure Layer" {
+    class MongoDBConfig {
+        +mongoTemplate(): MongoTemplate
+    }
+    class BrandRepositoryImpl {
+        +save(BrandEntity brand): BrandEntity
+        +findById(String id): Optional<BrandEntity>
+        +findAll(PageRequest pageRequest): List<BrandEntity>
+        +deleteById(String id): void
+    }
+    class CampaignRepositoryImpl {
+        +save(CampaignEntity campaign): CampaignEntity
+        +findById(String id): Optional<CampaignEntity>
+        +findAll(PageRequest pageRequest): List<CampaignEntity>
+        +deleteById(String id): void
+    }
+    class CreativeRepositoryImpl {
+        +save(CreativeEntity creative): Creative
+        +findById(String id): Optional<CreativeEntity>
+        +findAll(PageRequest pageRequest): List<CreativeEntity>
+        +deleteById(String id): void
+        +findByCampaignId(String campaignId, PageRequest pageRequest): List<CreativeEntity>
+        +findByBrandIdAndCampaignId(String brandId, String campaignId, PageRequest pageRequest): List<CreativeEntity>
+    }
+
+    BrandRepositoryImpl --> MongoDBConfig
+    CampaignRepositoryImpl --> MongoDBConfig
+    CreativeRepositoryImpl --> MongoDBConfig
+}
+
+"Repository Layer" --> "Infrastructure Layer"
+
+package "Configuration" {
+    class WebSecurity
+    class WebMvcConfig
+    class SwaggerConfig
+}
+
+"Infrastructure Layer" --> "Configuration"
+
+@enduml
