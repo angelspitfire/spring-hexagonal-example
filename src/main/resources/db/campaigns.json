@@ -1,0 +1,50 @@
+[
+  {
+    "id": "1",
+    "name": "Campaign A1",
+    "description": "Description for Campaign A1.",
+    "brand_id": "1"
+  },
+  {
+    "id": "2",
+    "name": "Campaign A2",
+    "description": "Description for Campaign A2.",
+    "brand_id": "1"
+  },
+  {
+    "id": "3",
+    "name": "Campaign A3",
+    "description": "Description for Campaign A3.",
+    "brand_id": "1"
+  },
+  {
+    "id": "4",
+    "name": "Campaign B1",
+    "description": "Description for Campaign B1.",
+    "brand_id": "2"
+  },
+  {
+    "id": "5",
+    "name": "Campaign B2",
+    "description": "Description for Campaign B2.",
+    "brand_id": "2"
+  },
+  {
+    "id": "6",
+    "name": "Campaign B3",
+    "description": "Description for Campaign B3.",
+    "brand_id": "2"
+  },
+  {
+    "id": "7",
+    "name": "Campaign C1",
+    "description": "Description for Campaign C1.",
+    "brand_id": "3"
+  },
+  {
+    "id": "8",
+    "name": "Campaign C2",
+    "description": "Description for Campaign C2.",
+    "brand_id": "3"
+  }
+]

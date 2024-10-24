@@ -1,0 +1,55 @@
+@startuml
+!theme plain
+
+package "Controller Layer" {
+    class BrandController {
+        +createBrand(brand: Brand): ResponseEntity<Brand>
+        +listBrands(page: int, size: int): ResponseEntity<List<Brand>>
+        +getBrandById(brandId: String): ResponseEntity<Brand>
+        +updateBrand(brandId: String, brand: Brand): ResponseEntity<Brand>
+        +deleteBrand(brandId: String): ResponseEntity<?>
+        +createCampaignForBrand(brandId: String, campaign: Campaign): ResponseEntity<Campaign>
+        +listCampaignsForBrand(brandId: String, page: int, size: int): ResponseEntity<List<Campaign>>
+        +listCreativesForCampaign(brandId: String, campaignId: String, page: int, size: int): ResponseEntity<List<Creative>>
+        +uploadCreative(brandId: String, campaignId: String, file: MultipartFile, name: String, description: String): ResponseEntity<Creative>
+    }
+    class CampaignController {
+        +createCampaign(campaign: Campaign): ResponseEntity<Campaign>
+        +listCampaigns(page: int, size: int): ResponseEntity<List<Campaign>>
+        +getCampaignById(campaignId: String): ResponseEntity<Campaign>
+        +updateCampaign(campaignId: String, campaign: Campaign): ResponseEntity<Campaign>
+        +deleteCampaign(campaignId: String): ResponseEntity<?>
+    }
+    class CreativeController {
+        +createCreative(creative: Creative): ResponseEntity<Creative>
+        +listCreatives(page: int, size: int): ResponseEntity<List<Creative>>
+        +getCreativeById(creativeId: String): ResponseEntity<Creative>
+        +updateCreative(creativeId: String, creative: Creative): ResponseEntity<Creative>
+        +deleteCreative(creativeId: String): ResponseEntity<?>
+    }
+}
+
+package "Service Layer" {
+    class ManageBrandUseCaseImpl {
+        +createBrand(brand: Brand): Brand
+        +listBrands(pageable: Pageable): List<Brand>
+        +getBrandById(brandId: String): Optional<Brand>
+        +updateBrand(brandId: String, brand: Brand): Optional<Brand>
+        +deleteBrand(brandId: String): boolean
+    }
+    class ManageCampaignUseCaseImpl {
+        +createCampaignForBrand(brandId: String, campaign: Campaign): Campaign
+        +findCampaignsByBrandId(brandId: String, pageable: Pageable): List<Campaign>
+        +findCreativesByBrandIdAndCampaignId(brandId: String, campaignId: String, pageable: Pageable): List<Creative>
+        +uploadCreativeForCampaign(brandId: String, campaignId: String, creativeUploadDTO: CreativeUploadDTO): Creative
+    }
+    class ManageCreativeUseCaseImpl {
+        +createCreative(creative: Creative): Creative
+        +listCreatives(pageable: Pageable): List<Creative>
+        +getCreativeById(creativeId: String): Optional<Creative>
+        +updateCreative(creativeId: String, creative: Creative): Optional<Creative>
+        +deleteCreative(creativeId: String): boolean
+    }
+}
+
+@enduml
