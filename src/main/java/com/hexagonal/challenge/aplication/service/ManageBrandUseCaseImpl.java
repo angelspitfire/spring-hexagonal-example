@@ -34,8 +34,8 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
     public Brand createBrand(@Valid BrandCreationDto brandCreationDto) {
         log.info("Attempting to create brand: {}", brandCreationDto.getName());
         try {
-            BrandEntity newBrandEntity = mapToBrandEntity(brandCreationDto);
-            BrandEntity savedBrandEntity = brandRepository.save(newBrandEntity);
+            var newBrandEntity = new BrandEntity(null, brandCreationDto.getName(), brandCreationDto.getDescription());
+            var savedBrandEntity = brandRepository.save(newBrandEntity);
             log.info("Brand created successfully with ID: {}", savedBrandEntity.getId());
             return mapToBrand(savedBrandEntity);
         } catch (DataAccessException e) {
@@ -80,11 +80,11 @@ public class ManageBrandUseCaseImpl implements ManageBrandUseCase {
         }
     }
 
-    private BrandEntity mapToBrandEntity(BrandCreationDto brandCreationDto) {
-        return new BrandEntity(null, brandCreationDto.getName(), brandCreationDto.getDescription());
-    }
-
     private Brand mapToBrand(BrandEntity brandEntity) {
-        return new Brand(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
+        return Brand.builder()
+                .brandId(brandEntity.getId())
+                .name(brandEntity.getName())
+                .description(brandEntity.getDescription())
+                .build();
     }
 }

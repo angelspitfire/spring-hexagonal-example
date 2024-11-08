@@ -141,7 +141,7 @@ void givenExistingBrandIdAndCampaignDetails_whenCreateCampaignForBrand_thenCampa
 }
 
     @Test
-    void givenNonExistentBrandId_whenCreateCampaignForBrand_thenBrandNotFoundExceptionIsThrown() {
+    void givenNonExistentBrandId_whenCreateCampaignForBrand_thenBrandCreateNotFoundExceptionIsThrown() {
         String brandId = "nonExistentBrand";
         CampaignCreationDTO campaign = new CampaignCreationDTO("Campaign Name", "Campaign Description");
         when(brandRepository.findById(brandId)).thenReturn(Optional.empty());

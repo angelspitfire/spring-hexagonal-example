@@ -3,9 +3,9 @@ package com.hexagonal.challenge.infraestructure.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
@@ -20,22 +20,23 @@ public class LocalStorageImpl implements FileStorageService {
 
     @Override
     public String storeFile(MultipartFile file) {
-        if (file == null) {
-            throw new RuntimeException("Cannot store null file");
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("Cannot store null or empty file");
         }
 
         try {
-            Path storagePath = Paths.get(storageLocation).toAbsolutePath().normalize();
+            var storagePath = Paths.get(storageLocation).toAbsolutePath().normalize();
             Files.createDirectories(storagePath);
 
-            String originalFileName = file.getOriginalFilename();
+            var originalFileName = file.getOriginalFilename();
             if (originalFileName == null || originalFileName.isEmpty()) {
-                throw new RuntimeException("Original filename is null or empty");
+                throw new IllegalArgumentException("Original filename is null or empty");
             }
-            String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
-            String fileName = UUID.randomUUID() + fileExtension;
 
-            Path targetLocation = storagePath.resolve(fileName);
+            var fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            var fileName = UUID.randomUUID() + fileExtension;
+
+            var targetLocation = storagePath.resolve(fileName);
             file.transferTo(targetLocation.toFile());
 
             return targetLocation.toString();

@@ -49,12 +49,6 @@
 - Upload a creative for a brand campaign.
 - List creatives for a brand campaign.
 
-Feel free to add any additional resources to make it easier for a UI to handle a large number of entities.
-
-### Steps to Proceed:
-
-- Create a private GitHub repository with your solution and share it with us.
-
 ## Solution Overview
 
 This project provides a system for managing brands, campaigns, and creatives within a digital advertising platform.

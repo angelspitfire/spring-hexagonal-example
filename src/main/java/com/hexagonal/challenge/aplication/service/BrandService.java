@@ -26,6 +26,10 @@ public class BrandService {
     }
 
     private static Brand getBrand(BrandEntity brandEntity) {
-        return new Brand(brandEntity.getId(), brandEntity.getName(), brandEntity.getDescription());
+        return Brand.builder()
+                .brandId(brandEntity.getId())
+                .name(brandEntity.getName())
+                .description(brandEntity.getDescription())
+                .build();
     }
 }

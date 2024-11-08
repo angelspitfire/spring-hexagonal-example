@@ -21,7 +21,7 @@ public class CreativeController {
     @GetMapping
     public ResponseEntity<List<Creative>> listCreatives(@RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Creative> creatives = manageCreativeUseCase.listCreatives(PageRequest.of(page, size));
+        var creatives = manageCreativeUseCase.listCreatives(PageRequest.of(page, size));
         return ResponseEntity.ok(creatives);
     }
 

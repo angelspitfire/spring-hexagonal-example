@@ -21,7 +21,7 @@ public class CampaignController {
     @GetMapping
     public ResponseEntity<List<Campaign>> listCampaigns(@RequestParam(value = "page", defaultValue = "0") int page,
                                                         @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Campaign> campaigns = manageCampaignUseCase.listCampaigns(PageRequest.of(page, size));
+        var campaigns = manageCampaignUseCase.listCampaigns(PageRequest.of(page, size));
         return ResponseEntity.ok(campaigns);
     }
 

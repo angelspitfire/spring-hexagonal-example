@@ -38,6 +38,6 @@ class LocalStorageImplTest {
     @Test
     void givenNullFile_whenStoreFile_thenExceptionIsThrown() {
         Exception exception = assertThrows(RuntimeException.class, () -> fileStorageService.storeFile(null));
-        assertEquals("Cannot store null file", exception.getMessage());
+        assertEquals("Cannot store null or empty file", exception.getMessage());
     }
 }

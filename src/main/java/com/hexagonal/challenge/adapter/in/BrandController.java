@@ -29,14 +29,14 @@ public class BrandController {
 
     @PostMapping
     public ResponseEntity<Brand> createBrand(@RequestBody @Valid BrandCreationDto brand) {
-        Brand createdBrand = manageBrandUseCase.createBrand(brand);
+        var createdBrand = manageBrandUseCase.createBrand(brand);
         return ResponseEntity.ok(createdBrand);
     }
 
     @GetMapping
     public ResponseEntity<List<Brand>> listBrands(@RequestParam(value = "page", defaultValue = "0") int page,
                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
-        List<Brand> brands = manageBrandUseCase.listBrands(PageRequest.of(page, size));
+        var brands = manageBrandUseCase.listBrands(PageRequest.of(page, size));
         return ResponseEntity.ok(brands);
     }
 
@@ -65,7 +65,7 @@ public class BrandController {
 
     @PostMapping("/{brandId}/campaigns")
     public ResponseEntity<Campaign> createCampaignForBrand(@PathVariable String brandId, @RequestBody @Valid CampaignCreationDTO campaign) {
-        Campaign createdCampaign = manageCampaignUseCase.createCampaignForBrand(brandId, campaign);
+        var createdCampaign = manageCampaignUseCase.createCampaignForBrand(brandId, campaign);
         return ResponseEntity.ok(createdCampaign);
     }
 
@@ -73,15 +73,15 @@ public class BrandController {
     public ResponseEntity<List<Campaign>> listCampaignsForBrand(@PathVariable String brandId,
                                                                 @RequestParam(value = "page", defaultValue = "0") int page,
                                                                 @RequestParam(value = "size", defaultValue = "10") int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<Campaign> campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
+        var pageRequest = PageRequest.of(page, size);
+        var campaigns = manageCampaignUseCase.findCampaignsByBrandId(brandId, pageRequest);
         return ResponseEntity.ok(campaigns);
     }
 
     @GetMapping("/{brandId}/campaigns/{campaignId}/creatives")
     public ResponseEntity<List<Creative>> listCreativesForCampaign(@PathVariable String brandId, @PathVariable String campaignId, @RequestParam(value = "page", defaultValue = "0") int page, @RequestParam(value = "size", defaultValue = "10") int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        List<Creative> creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
+        var pageRequest = PageRequest.of(page, size);
+        var creatives = manageCampaignUseCase.findCreativesByBrandIdAndCampaignId(brandId, campaignId, pageRequest);
         return ResponseEntity.ok(creatives);
     }
 

@@ -30,44 +30,34 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
 
     @Override
     public Creative createCreative(@Valid CreativeDTO creativeDTO) {
-
-        try {
-            log.info("Creating a new creative: {}", creativeDTO.getName());
-
-            CreativeEntity entity = getEntityFromDTO(creativeDTO);
-            CreativeEntity savedEntity = creativeRepository.save(entity);
-
-            log.info("Successfully created creative with ID: {}", savedEntity.getId());
-
-            return convertToCreativeDomain(savedEntity);
-        } catch (Exception e) {
-            log.error("Error creating creative: {}", e.getMessage());
-            throw new RuntimeException("Failed to create creative", e);
-        }
+        log.info("Creating a new creative: {}", creativeDTO.getName());
+        var entity = getEntityFromDTO(creativeDTO);
+        var savedEntity = creativeRepository.save(entity);
+        log.info("Successfully created creative with ID: {}", savedEntity.getId());
+        return convertToCreativeDomain(savedEntity);
     }
 
     @Override
     public List<Creative> listCreatives(PageRequest pageRequest) {
-        return creativeRepository.findAll(pageRequest).stream().map(ManageCreativeUseCaseImpl::getCreative).toList();
+        return creativeRepository.findAll(pageRequest)
+                .stream()
+                .map(this::convertToCreativeDomain)
+                .toList();
     }
 
     @Override
     public Optional<Creative> getCreativeById(@NotBlank String creativeId) {
-        return creativeRepository.findById(creativeId).map(ManageCreativeUseCaseImpl::getCreative);
+        return creativeRepository.findById(creativeId)
+                .map(this::convertToCreativeDomain);
     }
 
     @Override
-    public Optional<Creative> updateCreative(@NotBlank String creativeId, CreativeUpdateDTO creative) {
-
-        CreativeEntity creativeEntity = creativeRepository.findById(creativeId)
+    public Optional<Creative> updateCreative(@NotBlank String creativeId, @Valid CreativeUpdateDTO creative) {
+        var creativeEntity = creativeRepository.findById(creativeId)
                 .orElseThrow(() -> new CreativeNotFoundException("Creative with id " + creativeId + " not found."));
-
-        creativeEntity.setName(creative.getName());
-        creativeEntity.setDescription(creative.getDescription());
-        creativeEntity.setCreativeUrl(creative.getCreativeUrl());
-        CreativeEntity updatedEntity = creativeRepository.save(creativeEntity);
-
-        return Optional.of(getCreative(updatedEntity));
+        updateCreativeEntity(creativeEntity, creative);
+        var updatedEntity = creativeRepository.save(creativeEntity);
+        return Optional.of(convertToCreativeDomain(updatedEntity));
     }
 
     @Override
@@ -80,11 +70,13 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
     }
 
     private Creative convertToCreativeDomain(CreativeEntity savedEntity) {
-        return new Creative(savedEntity.getId(),
-                savedEntity.getName(),
-                savedEntity.getDescription(),
-                savedEntity.getCreativeUrl(),
-                savedEntity.getCampaignId());
+        return Creative.builder()
+                .creativeId(savedEntity.getId())
+                .name(savedEntity.getName())
+                .description(savedEntity.getDescription())
+                .creativeUrl(savedEntity.getCreativeUrl())
+                .campaignId(savedEntity.getCampaignId())
+                .build();
     }
 
     private CreativeEntity getEntityFromDTO(CreativeDTO creativeDTO) {
@@ -96,7 +88,9 @@ public class ManageCreativeUseCaseImpl implements ManageCreativeUseCase {
                 creativeDTO.getCampaignId());
     }
 
-    private static Creative getCreative(CreativeEntity creativeEntity) {
-        return new Creative(creativeEntity.getId(), creativeEntity.getName(), creativeEntity.getDescription(), creativeEntity.getCreativeUrl(), creativeEntity.getCampaignId());
+    private void updateCreativeEntity(CreativeEntity creativeEntity, CreativeUpdateDTO creative) {
+        creativeEntity.setName(creative.getName());
+        creativeEntity.setDescription(creative.getDescription());
+        creativeEntity.setCreativeUrl(creative.getCreativeUrl());
     }
 }
